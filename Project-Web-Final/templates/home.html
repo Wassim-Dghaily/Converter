@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--TODO: add avi to mp4 convertion option-->
+<!--TODO: fix home link transform on hover-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Converter</title>
+    <!-- Link CSS files -->
+    <link rel="stylesheet" media="screen and (min-width:600px)" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='MobileStyles.css') }}"
+          media="screen and (max-width:600px)">
+</head>
+
+<body>
+<table width="100%" height="100%" border="0" cellspacing="0" cellpadding="10">
+    <tr>
+        <!-- Left Ad Space -->
+        <div class="ads">
+            <td width="15%" bgcolor="#f0f0f0" calign="center" valign="top">
+
+            </td>
+        </div>
+
+        <!-- Main Content -->
+
+        <td width="70%" valign="top" bgcolor="f0f0f0">
+            <div>
+                <!-- Header -->
+                <header>
+
+                    <div class="Uni-converter">
+                        <span class="title">Universal Converter</span>
+                        <div class="home-link">
+                            <a href="home">home</a>
+                        </div>
+                        <ul class="header-links">
+
+                            <li><a href="{{ url_for('images') }}">Images</a></li>
+                            <li><a href="{{ url_for('videos') }}">Videos</a></li>
+                            <li><a href="{{ url_for('ocr') }}">OCR</a></li>
+                            <li><a href="{{ url_for('documents') }}">Docs</a></li>
+
+                        </ul>
+                    </div>
+
+
+                </header>
+
+                <!-- Main Section -->
+                <main>
+                    <!-- Conversion Options -->
+                    <div class="conversion-options">
+                        <h3>Conversion Options</h3>
+                        <ul>
+                            <li>
+                                <!-- Image with a source from the static folder -->
+                                <img src="{{ url_for('static', filename='photos/img_logo.png') }}" alt="Icon 4"
+                                     style="width: 30px;">
+                                <span>
+                                  Convert images to various formats easily
+                                </span>
+                            </li>
+                            <li>
+                                <img src="{{ url_for('static', filename='photos/vid_logo.png') }}" alt="Icon 1"
+                                     style="width: 30px;">
+                                <span>Convert videos to various formats easily.</span>
+                            </li>
+                            <li>
+                                <img src="{{ url_for('static', filename='photos/ocr_logo.png') }}" alt="Icon 2"
+                                     style="width: 30px;">
+                                <span>Extract text from images using OCR.</span>
+                            </li>
+                            <li>
+                                <img src="{{ url_for('static', filename='photos/docs_logo.png') }}" alt="Icon 3"
+                                     style="width: 30px;">
+                                <span>Support for documents like Word and PDF.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+
+                    <!-- Note -->
+
+
+                    <!--Convertable to table-->
+                    <div id="convertion_table">
+
+                        <table class="table-styled">
+
+                            <tr id="first-table">
+                                <th>File Type</th>
+                                <th>Can Be Converted To</th>
+                            </tr>
+                            <tr>
+                                <td><a href="images.html">Images (.jpg, .png, .gif)</td>
+                                </a>
+                                <td>PDF, WebP, BMP, TIFF</td>
+                            </tr>
+                            <tr>
+                                <td><a href="videos.html">Videos (.mp4,.mov)</a></td>
+                                <td>MP3, GIF, WebM, MKV</td>
+                            </tr>
+                            <tr>
+                                <td><a href="documents.html">Documents (.docx, .pptx, .xlsx)</a></td>
+                                <td>PDF, TXT</td>
+                            </tr>
+                            <tr id="no_border">
+                                <td><a href="ocr.html">Image</a></td>
+                                <td>Text</td>
+                            </tr>
+
+                        </table>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="details-container">
+                        <div class="details details-left">
+                            <p>
+                                This converter supports many file conversions.<br>
+                                You can convert videos, images, audio files,<br>
+                                and other formats. There are tons of advanced<br>
+                                options to fine-tune your conversions.
+                            </p>
+                        </div>
+                        <div class="details details-right">
+                            <p>
+                                This is an online file converter.<br>
+                                So it works on Windows and any mobile device.<br>
+                                Simply upload a file and select a target format.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!--Features-->
+                    <div id="features">
+                        <h2 style="color: #5b5454;"><strong>--Features--</strong></h2>
+                        <ul class="features_ul_color">
+                            <li>
+                                <h3 style="text-decoration: underline;">Batch Processing</h3>
+                                <p>Convert multiple files at once</p>
+                            </li>
+                            <li>
+                                <h3 style="text-decoration: underline;">Extract text From Images</h3>
+                                <p>we use OCR to extract text from images in 1 click</p>
+                            </li>
+                            <li>
+                                <h3 style="text-decoration: underline;">Advanced Options</h3>
+                                <p>Fine-tune your conversion settings</p>
+                            </li>
+                            <li>
+                                <h3 style="text-decoration: underline;">Secure Processing</h3>
+                                <p>Your files are processed securely and privately</p>
+
+                            </li>
+
+                        </ul>
+                    </div>
+
+                </main>
+
+        </td>
+
+        <!-- Right Ad Space -->
+        <div class="ads">
+            <td width="15%" bgcolor="#f0f0f0" align="center" valign="top">
+
+            </td>
+        </div>
+    </tr>
+</table>
+
+<!-- Footer -->
+<footer>
+    <div>
+        <p>
+            Contact us :<br>
+            email : <a href="mailto:hmt002@pu.edu.lb"> Hussein Tarhini</a>
+            &nbsp;
+            phone number : <a href="tel:123456789"> Hussein Tarhini</a>
+            <br>
+            email : <a href="mailto:wassimdghaily4@gmail.com">Wassim Dghaily</a>
+            &nbsp;
+            phone number : <a href="tel:123456789"> Wasim Dghaily</a>
+        </p>
+    </div>
+    <div>
+        <p>Copyright &copy; 2024</p>
+    </div>
+</footer>
+</div>
+
+</body>
+
+</html>

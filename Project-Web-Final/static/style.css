@@ -1,0 +1,267 @@
+.header {
+    text-align: center;
+    font-size: large;
+    font-weight: bold;
+
+}
+header{
+    font-weight: bold;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5%;
+    text-align:center;
+    z-index: 1000;
+    background-color:  #efeef3;
+    display: inline-block;
+    box-shadow: 5px 2px 5px #1111115c;
+ 
+}
+.left-ad-space{
+    float: left ;
+    width: 15%;
+
+}
+.main-content{
+    width: 70%;
+}
+.right-ad-space{
+    float: right ;
+    width: 15%;
+}
+
+footer{
+    color: #ffffff;
+    background-color: #1e2e47;
+    text-align: center;
+    padding: 30px 0;
+}
+
+footer a{
+    color: #ffffff;
+}
+footer p{
+    color:darkgoldenrod;
+}
+.header-links{
+
+    float: right ;
+    list-style-type: none;
+    display: flex;
+    padding-top: 3px;
+    margin: 0;
+    transition: all 0.3s ease-in-out;
+    border-radius: 25px;
+    padding: 6px;
+    width: 14%;
+    background-color: #E6E6FA;
+}
+.header-links li{
+    display: inline;
+    padding-right: 5px;
+    color: #36454F;
+    border-radius: 25px;
+    font-size: small;
+
+}
+.header-links :hover{
+    transform: scale(1.2);
+}
+ul li a {
+    text-decoration: none;
+}
+.home-link{
+    color: #36454F;
+    float: left ;
+    display: flex;
+    padding-top: 3px;
+    margin: 0;
+    transition: all 0.3s ease-in-out;
+    border-radius: 25px;
+    padding: 4px;
+    width: 13%;
+    background-color: #E6E6FA;
+
+}
+.home-link a{
+    text-decoration: none;
+}
+
+
+body {
+    background-color: #efeef3;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+.ads{
+    margin-top: 5%;
+}
+
+
+.table-styled {
+    width: 100%;
+    border-radius: 25px;
+    background-color: #ffffff;
+    border-collapse: separate;
+    margin-top: 19px;
+}
+
+.table-styled th, .table-styled td {
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+
+}
+.table-styled th {
+    background-color: #dcdcdc5f;
+    color: #fff;
+
+}
+
+.table-styled tr:hover {
+    background-color: #FBFBFF;
+}
+
+.table-styled caption {
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: #dcdcdca1;
+}
+#convertion_table{
+    padding-bottom: 20px;
+    box-shadow: 5px 5px 10px #1111115c;
+    border-radius: 15px; 
+    overflow: hidden;
+
+}
+#convertion_table th{
+    box-shadow: 5px 5px 10px #1111115c;
+    
+}
+#first-table {
+    background-color: #E6E6FA;
+    color: black;
+}
+
+#first-table th {
+    color: #36454F;
+    border-radius: 25px;
+}
+
+td a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.conversion-options {
+    background-color: #E6E6FA;
+    padding: 20px;
+    border-radius: 25px;
+    box-shadow: 5px 5px 10px #1111115c;
+    color: #36454F;
+    margin-bottom: 20px;
+}
+
+
+.features_ul_color{
+    color : #6C6C9E;
+}
+
+.Uni-converter{
+    text-align: center;
+    padding-left: 10px;
+    padding-top: 5px;
+}
+.title {
+    color: #5b5454;
+    font-size: 24px;
+    font-weight: bold;
+}
+.details {
+    background-color: #E6E6FA;
+    margin-top: 25px;
+    text-align: center;
+    border-radius: 15px;
+    transition: all 0.3s ease-in-out;
+    color: #36454F;
+    display: inline-block; 
+    width: 49%; 
+    height: 150px; 
+    padding: 15px;
+    box-sizing: border-box;
+    box-shadow: 5px 5px 10px #1111115c; 
+    
+}
+
+.details:hover {
+    transform: scale(1.2);
+}
+
+.details-container {
+    display: block; 
+    overflow: visible;
+}
+.details-left {
+    float: left; 
+    text-align: center;
+}
+
+.details-right {
+    float: right;
+}
+.sub-titles{
+    text-align: center;
+    font-size: xx-large;
+    font-weight: bold;
+    margin-top: 25px;
+    color: #5b5454;
+}
+.drag-box{
+    border-radius: 20px;
+    border: 2px dashed #bec0da;
+    background-color: #efeef3;
+    width: 80%;
+    height: 250px;
+
+    margin-left: 10%;
+    margin-right: 10%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+
+    
+}
+.Choose-file{
+    color: white;
+    border: 2px solid #727cf5;
+    background-color: #727cf5;
+    width: 250px;
+    height: 70px;
+    align-items: center;     
+    justify-content: center;
+    text-align: center;
+    border-radius: 20px;
+    align-content:center ;
+    margin: 0 auto;
+
+}
+
+table tr{
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#no_border td{
+    border-bottom: none;
+}
+
+#features{
+    border-radius: 10px;
+    clear: both;
+    box-shadow: 5px 5px 10px #1111115c;
+    padding: 10px;
+    margin-top: 20px;
+}
+

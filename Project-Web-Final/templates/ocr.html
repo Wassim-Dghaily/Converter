@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Converter</title>
+    <!-- Link CSS files -->
+    <link rel="stylesheet" media="screen and (min-width:600px)" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='MobileStyles.css') }}"
+          media="screen and (max-width:600px)">
+</head>
+<body>
+<header>
+    <div class="Uni-converter">
+        <span class="title">Universal Converter</span>
+        <div class="home-link">
+            <a href="home">home</a>
+        </div>
+        <ul class="header-links">
+            <li><a href="{{ url_for('images') }}">Images</a></li>
+            <li><a href="{{ url_for('videos') }}">Videos</a></li>
+            <li><a href="{{ url_for('ocr') }}">OCR</a></li>
+            <li><a href="{{ url_for('documents') }}">Docs</a></li>
+        </ul>
+    </div>
+</header>
+
+<table class="main-table">
+    <tr>
+        <!-- Left Ad Space -->
+        <td class="left-ad-space" valign="top"></td>
+
+        <!-- Main Content -->
+        <td class="main-content" valign="top">
+            <main>
+                <div class="sub-titles">OCR</div>
+                <div class="drag-box">
+                    <p style="margin-top: 15px;"></p>
+
+                    <p id="info" style="margin-top: 10px"></p>
+                    <br>
+
+                    <div class="Choose-file">
+                        Drag and Drop or
+                        <a href="C:\Users\wassi\OneDrive\Documents\" style="text-decoration: underline;"> Choose
+                            File</a>
+                    </div>
+                    <p id="canBe"></p>
+                </div>
+
+
+                <script>
+                    let selectedFile;
+
+                    document.addEventListener('DOMContentLoaded', () => {
+                        const dragBox = document.querySelector('.drag-box');
+                        const chooseFileLink = dragBox.querySelector('a');
+                        const fileInput = document.createElement('input');
+                        fileInput.type = 'file';
+                        fileInput.style.display = 'none';
+                        dragBox.appendChild(fileInput);
+
+                        // Choose file functionality
+                        chooseFileLink.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            fileInput.click();
+                        });
+
+                        // File input change event
+                        fileInput.addEventListener('change', handleFiles);
+
+                        // Drag and drop functionality
+                        dragBox.addEventListener('dragover', (e) => {
+                            e.preventDefault();
+                            dragBox.classList.add('dragover');
+                        });
+
+                        dragBox.addEventListener('dragleave', () => {
+                            dragBox.classList.remove('dragover');
+                        });
+
+                        dragBox.addEventListener('drop', (e) => {
+                            e.preventDefault();
+                            dragBox.classList.remove('dragover');
+                            handleFiles(e.dataTransfer);
+                        });
+
+                        function handleFiles(filesSource) {
+                            const files = filesSource.files || filesSource;
+                            const formData = new FormData();
+
+                            // Process the files here
+                            for (const file of files) {
+                                console.log('File:', file.name);
+                                formData.append('file', file);
+                                selectedFile = file;
+
+                                
+                                const fileType = selectedFile.type; // Get the type
+
+
+
+
+
+                                document.getElementById("info").innerHTML = `File type: ${fileType}`;
+                            }
+
+                            //eb3ta la server(tells the server what rooute to take
+                            fetch('/upload_ocr', {
+                                method: 'POST',
+                                body: formData,
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                    console.log('Success:', data);
+                                    alert('File uploaded successfully!');
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                    alert('File upload failed.');
+                                });
+                        }
+                    });
+                </script>
+                <div style="clear: both;">
+                    <h2 style="color: #5b5454;"><strong>--Features--</strong></h2>
+                    <ul class="features_ul_color">
+                        <li>
+                            <h3 style="text-decoration: underline;">Batch Processing</h3>
+                            <p>Convert multiple files at once</p>
+                        </li>
+                        <li>
+                            <h3 style="text-decoration: underline;">Extract text From Images</h3>
+                            <p>We use OCR to extract text from images in 1 click</p>
+                        </li>
+                        <li>
+                            <h3 style="text-decoration: underline;">Advanced Options</h3>
+                            <p>Fine-tune your conversion settings</p>
+                        </li>
+                        <li>
+                            <h3 style="text-decoration: underline;">Secure Processing</h3>
+                            <p>Your files are processed securely and privately</p>
+                        </li>
+                    </ul>
+                </div>
+                <h6><strong>Note To Doctor: if the user puts a different file type (like a video in the images tab), a
+                    message will be displayed indicating to change pages <i></i></strong></h6>
+                <h6><strong><i>Note To Doctor: also if the user uploads an unsupported file type (one not put in our
+                    code), a feedback message can be written and sent to us for potential future addition</i></strong>
+                </h6>
+            </main>
+        </td>
+
+        <!-- Right Ad Space -->
+        <td class="right-ad-space" valign="top"></td>
+    </tr>
+</table>
+
+<!-- Footer -->
+<footer>
+    <p>Copyright &copy; 2024</p>
+    <p>Contact us:<br>
+        email: <a href="mailto:hmt002@pu.edu.lb">Hussein Tarhini</a> &nbsp; phone number: <a href="tel:123456789">Hussein
+            Tarhini</a><br>
+        email: <a href="mailto:wassimdghaily4@gmail.com">Wassim Dghaily</a> &nbsp; phone number: <a
+                href="tel:123456789">Wassim Dghaily</a>
+    </p>
+</footer>
+</body>
+</html>
