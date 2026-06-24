@@ -31,10 +31,12 @@ image, PDF, Word, PowerPoint, Excel, and more.
 | **Monetization** | **Freemium + ads for non-subscribers** is the target. Build clean & free first. Keep ad slots + account/payment seams in the architecture, but *decide the details when we reach that phase.* |
 | **Hosting** | **Netlify** (free or paid plan), custom **domain via GoDaddy or Netlify**. Client-side conversion fits Netlify perfectly (no heavy server needed at launch). |
 
+### ✅ Brand name: **YallaConvert** (locked 2026-06-24)
+- "Yalla" = "let's go / come on" — energetic, fast, friendly, memorable. Fits a quick converter.
+- Tone: fast, casual-but-trustworthy, modern. Tagline ideas (TBD): "Yalla, convert it." / "Convert anything, yalla."
+
 ### Open decisions (not blocking — resolve in Phase 1)
-- **Brand name.** Current placeholder is "Universal Converter." A unique, ownable name is
-  better for a commercial product + domain. → decide before/at Phase 1.
-- **Domain name** (depends on brand).
+- **Domain name** — check availability: `yallaconvert.com` (preferred), `.io`, `.app`, `yalla.convert…`. Secure before launch (GoDaddy/Netlify).
 - **UI kit / styling**: leaning **Tailwind CSS + shadcn/ui** (modern, fast, themeable). Confirm in Phase 1.
 
 ---
@@ -190,6 +192,7 @@ Status legend: ☐ not started · ◐ in progress · ☑ done
 - **2026-06-24** — Repo cleanup: flattened `Project-Web-Final/` to root, removed duplicate
   root `.idea`. Read & understood the old Flask app. Locked the 4 founding decisions (§2).
   Researched client-side conversion feasibility. Wrote this file. *(Next: Phase 0.)*
+- **2026-06-24** — Brand name chosen: **YallaConvert**. *(Next: check domain availability, then Phase 0.)*
 
 ## 9. Bugs Faced
 - _(none logged yet)_
