@@ -45,10 +45,14 @@ class ConverterRegistry {
     );
   }
 
-  /** Distinct target formats reachable from a given source format id. */
-  targetsFor(fromId: string): FileFormat[] {
+  /**
+   * Distinct target formats reachable from a given source format id, optionally limited to
+   * converters in a single category (so e.g. the Image page only offers image targets).
+   */
+  targetsFor(fromId: string, category?: CategoryId): FileFormat[] {
     const ids = new Set<string>();
     for (const c of this.all()) {
+      if (category && c.category !== category) continue;
       if (c.from.includes(fromId)) c.to.forEach((t) => ids.add(t));
     }
     return [...ids]

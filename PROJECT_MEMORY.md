@@ -132,8 +132,17 @@ Status legend: ☐ not started · ◐ in progress · ☑ done
 - **Deferred to later (not blocking):** CI/preview deploys + shadcn/ui proper init can come
   with the Netlify connection in Phase 10 (or sooner if useful).
 
-### ☐ Phase 2 — Image conversion (first shippable win)
-- jSquash + heic2any + Canvas; full image matrix; resize/compress/quality; batch.
+### ☑ Phase 2 — Image conversion (first shippable win)  *(done 2026-06-24)*
+- ☑ Real in-browser image converter live ([src/lib/engine/converters/image.ts](src/lib/engine/converters/image.ts)),
+  registered as `status: "available"`. The Image category now shows **Ready** automatically.
+- ☑ Decode: jSquash (jpg/png/webp/avif), heic2any (HEIC), canvas/`createImageBitmap` (gif/bmp).
+  Encode: jSquash → jpg/png/webp/avif. Options: **Quality** (lossy targets) + **Max dimension** resize.
+- ☑ Generic, registry-driven **converter options schema** (`ConverterOption`) + UI controls in `ConverterShell`.
+- ☑ All heavy libs loaded via dynamic `import()` inside `convert()` → never in the server bundle;
+  jSquash codecs lazy-load on first use (convert pages stay ~102 kB First Load JS).
+- ☑ Verified: `next build` green; **Node codec smoke test 9/9 pass** (png/jpeg/webp/avif encode+decode, resize).
+- **Still coming-soon (this category):** gif/bmp/tiff/ico **output**, animated GIF, batch/multi-file.
+- **Needs a real browser click-test** (can't headlessly): the canvas (gif/bmp) and HEIC paths.
 
 ### ☐ Phase 3 — Audio conversion
 - ffmpeg.wasm (single+multi-thread); audio formats; extract-from-video; bitrate options.
@@ -205,6 +214,10 @@ Status legend: ☐ not started · ◐ in progress · ☑ done
   Tailwind app with YallaConvert branding, the Conversion Engine Registry, Web Worker infra,
   Dropzone/ConverterShell, and navigable category + OCR routes. `npm install` + `next build`
   both pass. *(Next: Phase 2 — implement real image conversion to make the first category live.)*
+- **2026-06-24** — **Phase 2 complete.** Image conversion is live and in-browser via jSquash +
+  heic2any (jpg/png/webp/avif + HEIC/gif/bmp input), with quality + resize options and a generic
+  options system. Build green; codec smoke test 9/9. *(Next: Phase 3 — audio conversion via ffmpeg.wasm,
+  which is where the Web Worker infra finally gets used in anger.)*
 
 ## 9. Bugs Faced
 - _(none logged yet)_
@@ -219,6 +232,16 @@ Status legend: ☐ not started · ◐ in progress · ☑ done
   (latest patched 14.2.x). Revisit a jump to Next 15 / React 19 once the conversion libs are in.
 - **Custom Button needs Radix `Slot` for an `asChild` prop** — we don't have it yet, so use
   `buttonVariants({...})` on a `<Link>` for link-styled buttons.
+- **jSquash gotchas (Phase 2):** `@jsquash/avif` `decode()` returns `ImageData | null` (must
+  null-check; the others don't). Needs `experiments.asyncWebAssembly` in next.config. Its
+  multi-thread AVIF worker triggers benign webpack warnings (`Critical dependency` / circular
+  chunks) — silenced via `config.ignoreWarnings`; the single-thread fallback is used at runtime
+  since we don't enable cross-origin isolation.
+- **Codecs must be loaded via dynamic `import()` inside `convert()`**, not top-level imports —
+  otherwise jSquash/heic2any get evaluated during SSR/build and break.
+- **Testing WASM codecs in Node:** they `fetch` their `.wasm`, which Node can't do for `file://`.
+  Pass the bytes manually: wasm-bindgen (png/resize) via `init(bytes)`; emscripten (jpeg/webp/avif)
+  via `init({ wasmBinary: bytes })`, with separate enc/dec modules. Browser is unaffected (real fetch).
 
 ## 11. Process / Working Rules
 - **The user handles ALL git actions** (commit/push). Claude makes file changes only and

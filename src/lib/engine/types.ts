@@ -65,6 +65,41 @@ export interface ConversionResult {
 }
 
 /**
+ * A user-tunable option a converter exposes (quality, resize, ...). The UI renders these
+ * generically; values are collected into `ConversionInput.options` keyed by `id`.
+ * `appliesTo`, when present, limits the option to those target format ids.
+ */
+export type ConverterOption =
+  | {
+      id: string;
+      type: "range";
+      label: string;
+      min: number;
+      max: number;
+      step: number;
+      default: number;
+      unit?: string;
+      appliesTo?: string[];
+    }
+  | {
+      id: string;
+      type: "number";
+      label: string;
+      default?: number;
+      min?: number;
+      max?: number;
+      placeholder?: string;
+      appliesTo?: string[];
+    }
+  | {
+      id: string;
+      type: "toggle";
+      label: string;
+      default: boolean;
+      appliesTo?: string[];
+    };
+
+/**
  * A unit of conversion capability. A converter may support several source and target
  * formats (e.g. the image converter handles many raster formats at once).
  */
@@ -78,6 +113,8 @@ export interface Converter {
   from: string[];
   /** Format ids this converter can produce. */
   to: string[];
+  /** User-tunable options the UI renders for this converter. */
+  options?: ConverterOption[];
   /**
    * Perform the conversion. Only required when `status === "available"`.
    * `coming-soon` converters may omit it (the registry guards against calling it).

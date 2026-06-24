@@ -1,5 +1,6 @@
 import { registry } from "./registry";
 import type { CategoryId } from "./types";
+import { imageConverter } from "./converters/image";
 
 /**
  * Phase 1 seed: registers placeholder "coming-soon" converters so the UI can present the
@@ -22,13 +23,10 @@ export function seedRegistry(): void {
   if (seeded) return;
   seeded = true;
 
-  // Phase 2 — Image
-  comingSoon(
-    "image-raster",
-    "image",
-    ["jpg", "png", "webp", "avif", "gif", "bmp", "tiff", "heic", "ico"],
-    ["jpg", "png", "webp", "avif", "gif", "bmp", "tiff", "ico"],
-  );
+  // Phase 2 — Image (LIVE)
+  registry.register(imageConverter);
+  // Image targets we don't encode client-side yet (gif/bmp/tiff/ico output).
+  comingSoon("image-extra-out", "image", ["jpg", "png", "webp", "avif", "tiff", "ico"], ["gif", "bmp", "tiff", "ico"]);
 
   // Phase 3 — Audio
   comingSoon(

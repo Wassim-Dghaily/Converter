@@ -8,14 +8,28 @@ import {
   CATEGORIES,
   FORMATS,
   registry,
-  runConversion,
   type CategoryId,
   type FileFormat,
   type ConversionResult,
+  type ConverterOption,
 } from "@/lib/engine";
+
+type OptionValue = number | boolean | string;
+
+// Common alternate extensions that map onto a canonical format id.
+const EXT_ALIASES: Record<string, string> = {
+  ".jpeg": "jpg",
+  ".jfif": "jpg",
+  ".tif": "tiff",
+  ".htm": "html",
+  ".markdown": "md",
+};
 
 function detectFormat(file: File): FileFormat | undefined {
   const name = file.name.toLowerCase();
+  for (const [ext, id] of Object.entries(EXT_ALIASES)) {
+    if (name.endsWith(ext)) return FORMATS.get(id);
+  }
   for (const f of FORMATS.values()) if (name.endsWith(f.ext)) return f;
   for (const f of FORMATS.values()) if (f.mime && f.mime === file.type) return f;
   return undefined;
@@ -47,7 +61,7 @@ export function ConverterShell({ categoryId }: { categoryId: CategoryId }) {
   const source = file ? detectFormat(file) : undefined;
 
   const targets = React.useMemo<FileFormat[]>(() => {
-    if (source) return registry.targetsFor(source.id).filter((f) => f.id !== source.id);
+    if (source) return registry.targetsFor(source.id, categoryId).filter((f) => f.id !== source.id);
     return [...FORMATS.values()].filter((f) => f.category === categoryId);
   }, [source, categoryId]);
 
@@ -61,6 +75,26 @@ export function ConverterShell({ categoryId }: { categoryId: CategoryId }) {
   const converter = source && target ? registry.find(source.id, target.id) : undefined;
   const ready = converter?.status === "available" && Boolean(converter.convert);
 
+  // Options applicable to the chosen target.
+  const appliedOptions = React.useMemo<ConverterOption[]>(
+    () =>
+      (converter?.options ?? []).filter(
+        (o) => !o.appliesTo || (target ? o.appliesTo.includes(target.id) : true),
+      ),
+    [converter, target],
+  );
+
+  const [optionValues, setOptionValues] = React.useState<Record<string, OptionValue>>({});
+  React.useEffect(() => {
+    const next: Record<string, OptionValue> = {};
+    for (const o of appliedOptions) {
+      if (o.type === "range") next[o.id] = o.default;
+      else if (o.type === "toggle") next[o.id] = o.default;
+      else if (o.type === "number" && o.default != null) next[o.id] = o.default;
+    }
+    setOptionValues(next);
+  }, [appliedOptions]);
+
   async function handleConvert() {
     if (!file || !source || !target || !converter?.convert) return;
     setBusy(true);
@@ -72,6 +106,7 @@ export function ConverterShell({ categoryId }: { categoryId: CategoryId }) {
         file,
         from: source,
         to: target,
+        options: optionValues,
         onProgress: (p) => setProgress(p.ratio),
       });
       setResult(res);
@@ -121,6 +156,69 @@ export function ConverterShell({ categoryId }: { categoryId: CategoryId }) {
                   ))}
                 </select>
               </div>
+
+              {ready && appliedOptions.length > 0 && !result && (
+                <div className="space-y-3 rounded-xl border border-border bg-muted/30 p-4">
+                  {appliedOptions.map((o) => (
+                    <div key={o.id} className="space-y-1.5">
+                      {o.type === "range" && (
+                        <>
+                          <label className="flex items-center justify-between text-sm font-medium">
+                            <span>{o.label}</span>
+                            <span className="text-muted-foreground">
+                              {Number(optionValues[o.id] ?? o.default)}
+                              {o.unit ?? ""}
+                            </span>
+                          </label>
+                          <input
+                            type="range"
+                            min={o.min}
+                            max={o.max}
+                            step={o.step}
+                            value={Number(optionValues[o.id] ?? o.default)}
+                            onChange={(e) =>
+                              setOptionValues((v) => ({ ...v, [o.id]: Number(e.target.value) }))
+                            }
+                            className="w-full accent-[hsl(var(--primary))]"
+                          />
+                        </>
+                      )}
+                      {o.type === "number" && (
+                        <label className="block space-y-1.5">
+                          <span className="text-sm font-medium">{o.label}</span>
+                          <input
+                            type="number"
+                            min={o.min}
+                            max={o.max}
+                            placeholder={o.placeholder}
+                            value={optionValues[o.id] === undefined ? "" : String(optionValues[o.id])}
+                            onChange={(e) =>
+                              setOptionValues((v) => ({
+                                ...v,
+                                [o.id]: e.target.value === "" ? "" : Number(e.target.value),
+                              }))
+                            }
+                            className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          />
+                        </label>
+                      )}
+                      {o.type === "toggle" && (
+                        <label className="flex cursor-pointer items-center gap-2 text-sm font-medium">
+                          <input
+                            type="checkbox"
+                            checked={Boolean(optionValues[o.id] ?? o.default)}
+                            onChange={(e) =>
+                              setOptionValues((v) => ({ ...v, [o.id]: e.target.checked }))
+                            }
+                            className="h-4 w-4 accent-[hsl(var(--primary))]"
+                          />
+                          {o.label}
+                        </label>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
 
               {busy && (
                 <div className="h-2 w-full overflow-hidden rounded-full bg-muted">

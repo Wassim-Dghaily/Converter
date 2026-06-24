@@ -6,6 +6,19 @@ const nextConfig = {
   // policy here, because it breaks third-party resources (ads, fonts, analytics). The
   // multi-threaded ffmpeg.wasm core that needs SharedArrayBuffer will be handled with a
   // route-scoped strategy in the video/audio phases. See PROJECT_MEMORY.md §7.
+  webpack(config) {
+    // jSquash and other codecs ship WebAssembly loaded asynchronously.
+    config.experiments = { ...config.experiments, asyncWebAssembly: true };
+    // jSquash's multi-threaded codec workers use a dynamic worker path that webpack can't
+    // statically resolve. We don't use the MT path (no cross-origin isolation), so the
+    // single-thread fallback is used at runtime. Silence the benign build warnings.
+    config.ignoreWarnings = [
+      ...(config.ignoreWarnings ?? []),
+      { module: /@jsquash/ },
+      /Critical dependency: the request of a dependency is an expression/,
+    ];
+    return config;
+  },
   async headers() {
     return [
       {
