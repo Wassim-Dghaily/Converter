@@ -1,0 +1,159 @@
+"use client";
+
+import * as React from "react";
+import { ArrowRight, Download, Loader2, ShieldCheck } from "lucide-react";
+import { Dropzone } from "@/components/dropzone";
+import { Button } from "@/components/ui/button";
+import {
+  CATEGORIES,
+  FORMATS,
+  registry,
+  runConversion,
+  type CategoryId,
+  type FileFormat,
+  type ConversionResult,
+} from "@/lib/engine";
+
+function detectFormat(file: File): FileFormat | undefined {
+  const name = file.name.toLowerCase();
+  for (const f of FORMATS.values()) if (name.endsWith(f.ext)) return f;
+  for (const f of FORMATS.values()) if (f.mime && f.mime === file.type) return f;
+  return undefined;
+}
+
+/**
+ * The shared converter UI for a category. Entirely registry-driven: it discovers valid
+ * target formats and converter availability from the engine, so when a real converter is
+ * registered (Phase 2+) this screen lights up automatically — no changes needed here.
+ */
+export function ConverterShell({ categoryId }: { categoryId: CategoryId }) {
+  const category = CATEGORIES[categoryId];
+  const accept = React.useMemo(
+    () =>
+      [...FORMATS.values()]
+        .filter((f) => f.category === categoryId)
+        .map((f) => f.ext)
+        .join(","),
+    [categoryId],
+  );
+
+  const [file, setFile] = React.useState<File | null>(null);
+  const [targetId, setTargetId] = React.useState<string>("");
+  const [busy, setBusy] = React.useState(false);
+  const [progress, setProgress] = React.useState(0);
+  const [error, setError] = React.useState<string | null>(null);
+  const [result, setResult] = React.useState<ConversionResult | null>(null);
+
+  const source = file ? detectFormat(file) : undefined;
+
+  const targets = React.useMemo<FileFormat[]>(() => {
+    if (source) return registry.targetsFor(source.id).filter((f) => f.id !== source.id);
+    return [...FORMATS.values()].filter((f) => f.category === categoryId);
+  }, [source, categoryId]);
+
+  React.useEffect(() => {
+    setTargetId(targets[0]?.id ?? "");
+    setResult(null);
+    setError(null);
+  }, [targets]);
+
+  const target = targets.find((t) => t.id === targetId);
+  const converter = source && target ? registry.find(source.id, target.id) : undefined;
+  const ready = converter?.status === "available" && Boolean(converter.convert);
+
+  async function handleConvert() {
+    if (!file || !source || !target || !converter?.convert) return;
+    setBusy(true);
+    setError(null);
+    setResult(null);
+    setProgress(0);
+    try {
+      const res = await converter.convert({
+        file,
+        from: source,
+        to: target,
+        onProgress: (p) => setProgress(p.ratio),
+      });
+      setResult(res);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Conversion failed.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function download() {
+    if (!result) return;
+    const url = URL.createObjectURL(result.blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = result.filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  return (
+    <div className="mx-auto max-w-2xl space-y-6">
+      <Dropzone accept={accept} file={file} onFileSelected={setFile} />
+
+      {file && (
+        <div className="space-y-4 rounded-2xl border border-border bg-card p-5">
+          {!source && (
+            <p className="text-sm text-amber-600 dark:text-amber-400">
+              We couldn&apos;t recognize this file type for {category.label.toLowerCase()} conversion. Try another file.
+            </p>
+          )}
+
+          {source && (
+            <>
+              <div className="flex items-center justify-center gap-3 text-sm">
+                <span className="rounded-lg bg-muted px-3 py-1.5 font-medium">{source.label}</span>
+                <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                <select
+                  value={targetId}
+                  onChange={(e) => setTargetId(e.target.value)}
+                  className="rounded-lg border border-input bg-background px-3 py-1.5 font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  {targets.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {busy && (
+                <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+                  <div className="h-full bg-primary transition-all" style={{ width: `${Math.round(progress * 100)}%` }} />
+                </div>
+              )}
+
+              {error && <p className="text-center text-sm text-red-600 dark:text-red-400">{error}</p>}
+
+              {result ? (
+                <Button onClick={download} className="w-full" size="lg">
+                  <Download className="h-4 w-4" /> Download {result.filename}
+                </Button>
+              ) : ready ? (
+                <Button onClick={handleConvert} disabled={busy} className="w-full" size="lg">
+                  {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                  {busy ? "Converting…" : `Convert to ${target?.label}`}
+                </Button>
+              ) : (
+                <div className="rounded-lg border border-dashed border-border bg-muted/40 px-4 py-3 text-center text-sm text-muted-foreground">
+                  This conversion is <span className="font-medium text-foreground">coming soon</span>. The interface is
+                  ready — the engine for {category.label.toLowerCase()} lands in an upcoming phase.
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      )}
+
+      <p className="flex items-center justify-center gap-1.5 text-center text-xs text-muted-foreground">
+        <ShieldCheck className="h-3.5 w-3.5 text-primary" />
+        Files are processed locally in your browser and never uploaded.
+      </p>
+    </div>
+  );
+}

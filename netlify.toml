@@ -1,0 +1,23 @@
+# Netlify configuration for YallaConvert (Next.js)
+# The official @netlify/plugin-nextjs is auto-installed by Netlify when it detects Next.js.
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# --- Security headers (mirror of next.config.mjs for production) ---
+# NOTE on cross-origin isolation: we intentionally do NOT set
+#   Cross-Origin-Opener-Policy: same-origin
+#   Cross-Origin-Embedder-Policy: require-corp
+# globally, because require-corp breaks third-party resources (ads, fonts, embeds).
+# The multi-threaded ffmpeg.wasm core (needs SharedArrayBuffer) will get a route-scoped
+# isolation strategy in the audio/video phases. See PROJECT_MEMORY.md §7.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"

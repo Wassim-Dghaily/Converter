@@ -112,18 +112,25 @@ queue the rest for the server-side phase.
 
 Status legend: ☐ not started · ◐ in progress · ☑ done
 
-### ☐ Phase 0 — De-brand & decommission the old project
-- Remove all uni identifiers: author names (Hussein Tarhini, Wassim Dghaily), emails/phones,
-  "Note To Doctor" comments, "©2024", hardcoded paths (`C:\Users\wassi\...`), leftover TODOs.
-- Archive the Flask code as reference for §11, then remove from the active app.
-- Decide repo strategy (new Next.js app at root; reference code in an `/legacy` or git history).
+### ☑ Phase 0 — De-brand & decommission the old project  *(done 2026-06-24)*
+- ☑ Archived the original Flask app to `legacy/` (with `legacy/README.md` — reference only,
+  not built/deployed) instead of carefully de-branding code we're replacing wholesale.
+- ☑ Removed root `.idea` and IDE cruft; repo strategy = new Next.js app at root, old code in `legacy/`.
+- Note: the uni identifiers (names, emails, "Note To Doctor", ©2024, `C:\Users\wassi\...`) now
+  live only in `legacy/` and git history; **none appear in the new app**.
 
-### ☐ Phase 1 — Foundation & architecture
-- Scaffold Next.js + TS + Tailwind (+ shadcn/ui) on Netlify; CI + preview deploys.
-- Brand identity: **name**, logo, color system, typography, dark mode, responsive layout shell, header/footer.
-- Build the **Conversion Engine Registry** + **Web Worker** infra + shared upload/drag-drop,
-  progress, validation, and download components.
-- `netlify.toml`; decide COOP/COEP strategy (see §7 risk).
+### ☑ Phase 1 — Foundation & architecture  *(done 2026-06-24)*
+- ☑ Scaffolded **Next.js 14.2 (App Router) + TypeScript + Tailwind** (+ tailwindcss-animate),
+  CSS-variable theming with dark mode, violet brand. Production build passes (12 routes).
+- ☑ **YallaConvert** brand: logo/wordmark, header, footer, homepage (hero + category grid +
+  how-it-works + privacy messaging). Site/brand config in `src/config/site.ts`.
+- ☑ **Conversion Engine Registry** (`src/lib/engine`): types, format catalog, category meta,
+  registry, and a `seed.ts` of honest "coming-soon" converters. UI is fully registry-driven.
+- ☑ **Web Worker infra** (`src/lib/workers`) + `runConversion` proxy; reusable `Dropzone`,
+  `ConverterShell` (progress/download wired), navigable `/convert/[category]` + `/ocr` routes.
+- ☑ `netlify.toml` + dev headers; COOP/COEP intentionally NOT global (see §7) — deferred to audio/video phases.
+- **Deferred to later (not blocking):** CI/preview deploys + shadcn/ui proper init can come
+  with the Netlify connection in Phase 10 (or sooner if useful).
 
 ### ☐ Phase 2 — Image conversion (first shippable win)
 - jSquash + heic2any + Canvas; full image matrix; resize/compress/quality; batch.
@@ -192,14 +199,26 @@ Status legend: ☐ not started · ◐ in progress · ☑ done
 - **2026-06-24** — Repo cleanup: flattened `Project-Web-Final/` to root, removed duplicate
   root `.idea`. Read & understood the old Flask app. Locked the 4 founding decisions (§2).
   Researched client-side conversion feasibility. Wrote this file. *(Next: Phase 0.)*
-- **2026-06-24** — Brand name chosen: **YallaConvert**. *(Next: check domain availability, then Phase 0.)*
+- **2026-06-24** — Brand name chosen: **YallaConvert**.
+- **2026-06-24** — **Phase 0 + Phase 1 complete.** Installed Node.js (v24) via winget — it
+  wasn't on the machine. Archived Flask app to `legacy/`. Scaffolded the Next.js + TS +
+  Tailwind app with YallaConvert branding, the Conversion Engine Registry, Web Worker infra,
+  Dropzone/ConverterShell, and navigable category + OCR routes. `npm install` + `next build`
+  both pass. *(Next: Phase 2 — implement real image conversion to make the first category live.)*
 
 ## 9. Bugs Faced
 - _(none logged yet)_
 
 ## 10. Lessons Learned
 - The old app's UI **over-promised** (fake format menus, dead `convertTo()`, "batch
-  processing" that didn't exist). Lesson: only surface conversions the engine actually supports.
+  processing" that didn't exist). Lesson: only surface conversions the engine actually
+  supports → enforced via the registry's `status: "available" | "coming-soon"` flag.
+- **Node.js wasn't installed** on this machine; installed Node v24 LTS via `winget`. New
+  shells need the machine PATH refreshed (`$env:Path = [Environment]::GetEnvironmentVariable("Path","Machine") + ...`).
+- **next@14.2.18 shipped with a security advisory** (2025-12-11). Pinned to `^14.2.35`
+  (latest patched 14.2.x). Revisit a jump to Next 15 / React 19 once the conversion libs are in.
+- **Custom Button needs Radix `Slot` for an `asChild` prop** — we don't have it yet, so use
+  `buttonVariants({...})` on a `<Link>` for link-styled buttons.
 
 ## 11. Process / Working Rules
 - **The user handles ALL git actions** (commit/push). Claude makes file changes only and
