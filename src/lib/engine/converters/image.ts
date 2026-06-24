@@ -1,5 +1,6 @@
 import type { Converter, ConversionInput, ConversionResult } from "../types";
 import { format } from "../formats";
+import { brandedFilename } from "../filename";
 
 /**
  * Image converter (Phase 2) — runs entirely in the browser.
@@ -120,7 +121,6 @@ export const imageConverter: Converter = {
 
     onProgress?.({ ratio: 1, stage: "Done" });
     const blob = new Blob([buffer], { type: to.mime });
-    const base = file.name.replace(/\.[^.]+$/, "") || "converted";
-    return { blob, filename: `${base}${to.ext}` };
+    return { blob, filename: brandedFilename(file.name, to.ext) };
   },
 };

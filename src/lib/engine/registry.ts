@@ -1,6 +1,18 @@
 import type { CategoryId, Converter, FileFormat } from "./types";
 import { getFormat } from "./formats";
 
+/** A concrete from→to conversion, used for SEO landing pages, links, and the sitemap. */
+export interface ConversionPair {
+  from: FileFormat;
+  to: FileFormat;
+  category: CategoryId;
+  /** URL slug, e.g. "png-to-jpg". */
+  slug: string;
+  status: Converter["status"];
+}
+
+export const pairSlug = (fromId: string, toId: string) => `${fromId}-to-${toId}`;
+
 /**
  * The conversion registry. Converters register themselves here (see `seed.ts`). The UI and
  * the conversion runner query this registry; they never import converters directly. This
@@ -58,6 +70,34 @@ class ConverterRegistry {
     return [...ids]
       .map((id) => getFormat(id))
       .filter((f): f is FileFormat => Boolean(f));
+  }
+
+  /**
+   * Enumerate concrete from→to conversion pairs across all converters. Powers per-conversion
+   * SEO landing pages (e.g. /png-to-jpg), internal links, and the sitemap.
+   */
+  pairs(opts?: { availableOnly?: boolean; category?: CategoryId }): ConversionPair[] {
+    const seen = new Map<string, ConversionPair>();
+    for (const c of this.all()) {
+      if (opts?.availableOnly && c.status !== "available") continue;
+      if (opts?.category && c.category !== opts.category) continue;
+      for (const fromId of c.from) {
+        for (const toId of c.to) {
+          if (fromId === toId) continue;
+          const slug = pairSlug(fromId, toId);
+          if (seen.has(slug)) continue;
+          const from = getFormat(fromId);
+          const to = getFormat(toId);
+          if (!from || !to) continue;
+          seen.set(slug, { from, to, category: c.category, slug, status: c.status });
+        }
+      }
+    }
+    return [...seen.values()];
+  }
+
+  findPair(slug: string): ConversionPair | undefined {
+    return this.pairs().find((p) => p.slug === slug);
   }
 }
 

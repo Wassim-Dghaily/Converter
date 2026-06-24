@@ -20,6 +20,15 @@ image, PDF, Word, PowerPoint, Excel, and more.
   only keep the architecture *ready* for it now; we decide monetization details when we
   reach that phase.
 
+### Product requirements (added 2026-06-25)
+- **Per-conversion SEO landing pages.** Every category must have a dedicated page for each
+  specific conversion (e.g. `/png-to-jpg`, `/mp4-to-mp3`) so users searching for that exact
+  conversion land directly on it. Built as a generic, **registry-driven** system — pages
+  auto-generate for every available conversion pair (see `src/app/[conversion]/page.tsx`).
+- **Branded output filenames.** Converted files keep the original base name plus a brand
+  mark: `originalname-yallaconvert.ext` (e.g. `vacation.png` → `vacation-yallaconvert.jpg`).
+  Shared helper `brandedFilename()` — all converters must use it.
+
 ---
 
 ## 2. Confirmed Decisions (locked 2026-06-24)
@@ -162,8 +171,12 @@ Status legend: ☐ not started · ◐ in progress · ☑ done
 ### ☐ Phase 7 — Archives & data formats
 - ZIP create/extract (JSZip); stretch: 7z/RAR extract (libarchive.js); JSON/CSV/XML/YAML.
 
-### ☐ Phase 8 — UX polish, SEO, performance, a11y, legal
-- Per-conversion SEO landing pages, meta tags, sitemap, structured data.
+### ◐ Phase 8 — UX polish, SEO, performance, a11y, legal
+- ☑ **Per-conversion SEO landing pages** built early (2026-06-25): registry-driven
+  `/[conversion]` route, per-pair title/meta + canonical, breadcrumb, related links,
+  "popular conversions" on category pages, and `sitemap.ts`. Live for Image (24 pages);
+  future categories generate theirs automatically.
+- ☐ Remaining: structured data (JSON-LD), richer per-pair copy, OG images, meta polish.
 - Lazy WASM loading, bundle splitting, mobile perf, accessibility, error states.
 - Privacy-first messaging; Privacy Policy, Terms, cookie/consent banner.
 
@@ -218,6 +231,10 @@ Status legend: ☐ not started · ◐ in progress · ☑ done
   heic2any (jpg/png/webp/avif + HEIC/gif/bmp input), with quality + resize options and a generic
   options system. Build green; codec smoke test 9/9. *(Next: Phase 3 — audio conversion via ffmpeg.wasm,
   which is where the Web Worker infra finally gets used in anger.)*
+- **2026-06-25** — User tested Image in-browser: **works**. Added two product requirements
+  (above) and built them: registry-driven per-conversion **SEO landing pages** (`/[conversion]`,
+  24 image pages live + sitemap + internal links) and **branded output filenames**
+  (`name-yallaconvert.ext`). Build green (37 static pages). *(Next: Phase 3 — audio.)*
 
 ## 9. Bugs Faced
 - _(none logged yet)_

@@ -40,7 +40,14 @@ function detectFormat(file: File): FileFormat | undefined {
  * target formats and converter availability from the engine, so when a real converter is
  * registered (Phase 2+) this screen lights up automatically — no changes needed here.
  */
-export function ConverterShell({ categoryId }: { categoryId: CategoryId }) {
+export function ConverterShell({
+  categoryId,
+  presetTargetId,
+}: {
+  categoryId: CategoryId;
+  /** When set (on a specific conversion page like /png-to-jpg), pre-selects this target. */
+  presetTargetId?: string;
+}) {
   const category = CATEGORIES[categoryId];
   const accept = React.useMemo(
     () =>
@@ -66,10 +73,13 @@ export function ConverterShell({ categoryId }: { categoryId: CategoryId }) {
   }, [source, categoryId]);
 
   React.useEffect(() => {
-    setTargetId(targets[0]?.id ?? "");
+    const preferred = presetTargetId && targets.some((t) => t.id === presetTargetId)
+      ? presetTargetId
+      : targets[0]?.id ?? "";
+    setTargetId(preferred);
     setResult(null);
     setError(null);
-  }, [targets]);
+  }, [targets, presetTargetId]);
 
   const target = targets.find((t) => t.id === targetId);
   const converter = source && target ? registry.find(source.id, target.id) : undefined;
