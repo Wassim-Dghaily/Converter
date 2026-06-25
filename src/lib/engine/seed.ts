@@ -8,6 +8,7 @@ import { documentConverter } from "./converters/document";
 import { imageToPdfConverter } from "./converters/image-pdf";
 import { pdfToTextConverter } from "./converters/pdf-text";
 import { pdfToImageConverter } from "./converters/pdf-image";
+import { ocrConverter } from "./converters/ocr";
 
 /**
  * Phase 1 seed: registers placeholder "coming-soon" converters so the UI can present the
@@ -50,8 +51,8 @@ export function seedRegistry(): void {
   registry.register(pdfToImageConverter);
   // Phase 5b-2 — Merge / Split (multi-file/multi-output) ship as dedicated "tools", not registry converters.
 
-  // Phase 6 — OCR
-  comingSoon("ocr-extract", "ocr", ["jpg", "png", "webp", "bmp", "tiff", "pdf"], ["txt", "pdf"]);
+  // Phase 6 — OCR (LIVE) — image → text in 100+ languages via tesseract.js
+  registry.register(ocrConverter);
 
   // Phase 7 — Archive
   comingSoon("archive-zip", "archive", ["zip"], ["zip"]);

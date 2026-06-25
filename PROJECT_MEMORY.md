@@ -211,8 +211,14 @@ Status legend: ☐ not started · ◐ in progress · ☑ done
 
 **Still later:** HTML→PDF, html→md (turndown), ODS, richer Markdown.
 
-### ☐ Phase 6 — OCR
-- tesseract.js image→text + searchable PDF; language picker; web-worker.
+### ☑ Phase 6 — OCR  *(done 2026-06-25)*
+- ☑ Live OCR converter ([src/lib/engine/converters/ocr.ts](src/lib/engine/converters/ocr.ts)) via
+  **tesseract.js 7** — image (jpg/png/webp/bmp/tiff) → text, with a **language picker** (14 common
+  languages from Tesseract's 100+). Progress streams from the recognizer; OCR category now LIVE.
+- ☑ **Browser-verified headlessly** (Playwright): rendered "HELLO OCR 12345" to a PNG → OCR returned
+  the exact text. Engine + lang data load from CDN (blob-URL worker → no webpack issue).
+- **Deferred:** searchable-PDF output, OCR-on-PDF (render pages then OCR), self-hosting the
+  tesseract engine/lang data (currently CDN — revisit in Phase 8).
 
 ### ☐ Phase 7 — Archives & data formats
 - ZIP create/extract (JSZip); stretch: 7z/RAR extract (libarchive.js); JSON/CSV/XML/YAML.
@@ -302,6 +308,9 @@ Status legend: ☐ not started · ◐ in progress · ☑ done
 - **2026-06-25** — **Phase 5b-2 complete.** PDF Merge + Split tools live via a new `tools` subsystem
   + `ToolShell` (multi-file). Node smoke 3/3, build green (129 pages). Phase 5 fully done.
   *(Next: Phase 6 — OCR (tesseract.js).)*
+- **2026-06-25** — **Phase 6 complete.** OCR live via tesseract.js 7 (image→text, 14-language picker).
+  Headlessly verified (recognized "HELLO OCR 12345" exactly). Build green, 134 static pages.
+  *(Next: Phase 7 — Archives (zip/unzip); or Phase 8 — UX/SEO/perf/legal polish.)*
 
 ## 9. Bugs Faced
 - **2026-06-25 — Audio conversion fails in the browser (RESOLVED).** mp3 → any format returned
