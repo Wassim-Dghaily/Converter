@@ -2,6 +2,7 @@ import { registry } from "./registry";
 import type { CategoryId } from "./types";
 import { imageConverter } from "./converters/image";
 import { audioConverter } from "./converters/audio";
+import { videoConverter } from "./converters/video";
 
 /**
  * Phase 1 seed: registers placeholder "coming-soon" converters so the UI can present the
@@ -32,14 +33,8 @@ export function seedRegistry(): void {
   // Phase 3 — Audio (LIVE)
   registry.register(audioConverter);
 
-  // Phase 4 — Video
-  comingSoon(
-    "video-transcode",
-    "video",
-    ["mp4", "webm", "mkv", "mov", "avi"],
-    ["mp4", "webm", "mkv", "gif"],
-  );
-  comingSoon("video-to-audio", "video", ["mp4", "webm", "mkv", "mov", "avi"], ["mp3", "wav", "aac"]);
+  // Phase 4 — Video (LIVE) — transcode + GIF + extract-audio
+  registry.register(videoConverter);
 
   // Phase 5 — PDF / document / spreadsheet
   comingSoon("pdf-tools", "pdf", ["pdf"], ["pdf", "jpg", "png", "txt"]);

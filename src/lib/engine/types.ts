@@ -97,6 +97,14 @@ export type ConverterOption =
       label: string;
       default: boolean;
       appliesTo?: string[];
+    }
+  | {
+      id: string;
+      type: "select";
+      label: string;
+      options: { value: string; label: string }[];
+      default: string;
+      appliesTo?: string[];
     };
 
 /**

@@ -171,9 +171,17 @@ Status legend: ☐ not started · ◐ in progress · ☑ done
 - ☑ **Browser-verified end-to-end** (2026-06-25) via headless Chromium: WAV→MP3 produced a real
   download. Required a worker-loading fix — see Bugs Faced (webpack + ffmpeg worker `import`).
 
-### ☐ Phase 4 — Video conversion
-- ffmpeg.wasm; video formats, video→GIF, video→audio, compress/trim/resolution;
-  memory/size guardrails, clear progress + warnings for big files.
+### ☑ Phase 4 — Video conversion  *(done 2026-06-25)*
+- ☑ Live video converter ([src/lib/engine/converters/video.ts](src/lib/engine/converters/video.ts))
+  on the same ffmpeg.wasm core/loader as audio. One converter, three jobs by target:
+  video→video (mp4/webm/mkv, optional downscale), video→**GIF** (fps + width), video→**audio**
+  (mp3/wav/aac, "extract audio"). Inputs: mp4/webm/mkv/mov/avi.
+- ☑ Added a generic **`select` option type** (used for the Resolution preset).
+- ☑ Friendly error when extracting audio from a silent video ("no audio track to extract").
+- ☑ **Browser-verified headlessly** (Playwright, canvas+MediaRecorder test clip): webm→mp4 ✅
+  and webm→gif ✅ both downloaded; webm→mp3 correctly reported "no audio" (test clip was silent).
+- **Limitations (logged §7):** single-thread ffmpeg.wasm is slow + memory-bound for large/long
+  videos; webm (vp8/9) encoding especially slow. No trim UI yet. Needs real-file click-test for big videos.
 
 ### ☐ Phase 5 — PDF & document tools
 - pdf-lib + pdf.js (merge/split/compress/rotate/reorder, images↔PDF, PDF→images, extract text).
@@ -257,6 +265,10 @@ Status legend: ☐ not started · ◐ in progress · ☑ done
   `import`). Reproduced + verified the fix headlessly with Playwright/Chromium (WAV→MP3 download).
   Self-hosted ffmpeg worker via `classWorkerURL`. *(Next: Phase 4 — video, same ffmpeg core/loader,
   so this fix carries over.)*
+- **2026-06-25** — Added **"Convert another file"** + target-change refresh to the converter UI.
+- **2026-06-25** — **Phase 4 complete.** Video conversion live (transcode + GIF + extract-audio)
+  via ffmpeg.wasm; added generic `select` option (Resolution). Headlessly verified webm→mp4 and
+  webm→gif. Build green. *(Next: Phase 5 — PDF & document tools, or polish.)*
 
 ## 9. Bugs Faced
 - **2026-06-25 — Audio conversion fails in the browser (RESOLVED).** mp3 → any format returned

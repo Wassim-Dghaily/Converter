@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { ArrowRight, Download, Loader2, ShieldCheck } from "lucide-react";
+import { ArrowRight, Download, Loader2, RotateCcw, ShieldCheck } from "lucide-react";
 import { Dropzone } from "@/components/dropzone";
 import { Button } from "@/components/ui/button";
 import {
@@ -101,6 +101,7 @@ export function ConverterShell({
     for (const o of appliedOptions) {
       if (o.type === "range") next[o.id] = o.default;
       else if (o.type === "toggle") next[o.id] = o.default;
+      else if (o.type === "select") next[o.id] = o.default;
       else if (o.type === "number" && o.default != null) next[o.id] = o.default;
     }
     setOptionValues(next);
@@ -143,6 +144,15 @@ export function ConverterShell({
     URL.revokeObjectURL(url);
   }
 
+  /** Reset back to the dropzone for another file, keeping the same conversion selected. */
+  function convertAnother() {
+    setFile(null);
+    setResult(null);
+    setError(null);
+    setProgress(0);
+    setStage("");
+  }
+
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <Dropzone accept={accept} file={file} onFileSelected={setFile} />
@@ -162,7 +172,12 @@ export function ConverterShell({
                 <ArrowRight className="h-4 w-4 text-muted-foreground" />
                 <select
                   value={targetId}
-                  onChange={(e) => setTargetId(e.target.value)}
+                  onChange={(e) => {
+                    // Picking a different target after a conversion refreshes to that conversion.
+                    setTargetId(e.target.value);
+                    setResult(null);
+                    setError(null);
+                  }}
                   className="rounded-lg border border-input bg-background px-3 py-1.5 font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   {targets.map((t) => (
@@ -218,6 +233,22 @@ export function ConverterShell({
                           />
                         </label>
                       )}
+                      {o.type === "select" && (
+                        <label className="block space-y-1.5">
+                          <span className="text-sm font-medium">{o.label}</span>
+                          <select
+                            value={String(optionValues[o.id] ?? o.default)}
+                            onChange={(e) => setOptionValues((v) => ({ ...v, [o.id]: e.target.value }))}
+                            className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          >
+                            {o.options.map((opt) => (
+                              <option key={opt.value} value={opt.value}>
+                                {opt.label}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                      )}
                       {o.type === "toggle" && (
                         <label className="flex cursor-pointer items-center gap-2 text-sm font-medium">
                           <input
@@ -257,9 +288,14 @@ export function ConverterShell({
               )}
 
               {result ? (
-                <Button onClick={download} className="w-full" size="lg">
-                  <Download className="h-4 w-4" /> Download {result.filename}
-                </Button>
+                <div className="space-y-2">
+                  <Button onClick={download} className="w-full" size="lg">
+                    <Download className="h-4 w-4" /> Download {result.filename}
+                  </Button>
+                  <Button onClick={convertAnother} variant="outline" className="w-full">
+                    <RotateCcw className="h-4 w-4" /> Convert another file
+                  </Button>
+                </div>
               ) : ready ? (
                 <Button onClick={handleConvert} disabled={busy} className="w-full" size="lg">
                   {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
