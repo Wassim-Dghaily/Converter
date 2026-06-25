@@ -3,7 +3,15 @@ import { CATEGORIES } from "./categories";
 import { registry } from "./registry";
 
 /** Categories shown in the main navigation, in order. */
-export const NAV_CATEGORIES: CategoryId[] = ["image", "audio", "video", "pdf", "ocr"];
+export const NAV_CATEGORIES: CategoryId[] = [
+  "image",
+  "audio",
+  "video",
+  "pdf",
+  "document",
+  "spreadsheet",
+  "ocr",
+];
 
 export interface NavMenuItem {
   label: string;
@@ -21,6 +29,8 @@ export interface NavMenu {
   label: string;
   /** General category page, e.g. /convert/image. */
   href: string;
+  /** Multi-file/multi-output tools for this category (e.g. Merge PDF). Filled by the UI layer. */
+  tools: NavMenuItem[];
   /** Conversions grouped by source format (empty for categories not live yet). */
   groups: NavMenuGroup[];
 }
@@ -47,6 +57,8 @@ export function buildNavMenus(): NavMenu[] {
         items: items.sort((a, b) => a.label.localeCompare(b.label)),
       }));
 
-    return { id, label: category.label, href: category.href, groups };
+    // `tools` is populated by the UI layer (SiteHeader) to keep the engine free of a
+    // dependency on the tools registry.
+    return { id, label: category.label, href: category.href, tools: [], groups };
   });
 }

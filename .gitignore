@@ -31,8 +31,9 @@ yarn-error.log*
 # netlify
 .netlify
 
-# self-hosted ffmpeg.wasm core (copied from node_modules by scripts/copy-ffmpeg.mjs)
+# self-hosted browser assets (copied from node_modules by scripts/copy-assets.mjs)
 /public/ffmpeg/
+/public/pdf/
 
 # editors
 .vscode/*

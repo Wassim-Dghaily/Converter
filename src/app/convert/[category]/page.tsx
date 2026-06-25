@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Wrench } from "lucide-react";
 import { CATEGORIES, CATEGORY_ORDER, registry, type CategoryId } from "@/lib/engine";
+import { toolsForCategory } from "@/lib/tools";
 import { ConverterShell } from "@/components/converter-shell";
 
 // Pages for categories that have a dedicated route (OCR has its own top-level route).
@@ -28,6 +29,7 @@ export default function CategoryPage({ params }: { params: { category: string } 
   if (!id) notFound();
   const category = CATEGORIES[id];
   const popular = registry.pairs({ availableOnly: true, category: id });
+  const tools = toolsForCategory(id);
 
   return (
     <div className="container py-12 md:py-16">
@@ -36,6 +38,34 @@ export default function CategoryPage({ params }: { params: { category: string } 
         <p className="mt-2 text-muted-foreground">{category.blurb}</p>
       </header>
       <ConverterShell categoryId={id} />
+
+      {tools.length > 0 && (
+        <section className="mx-auto mt-12 max-w-2xl">
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+            {category.label} tools
+          </h2>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {tools.map((tool) => (
+              <Link
+                key={tool.slug}
+                href={`/tools/${tool.slug}`}
+                className="group flex items-start gap-3 rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/40"
+              >
+                <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <Wrench className="h-4 w-4" />
+                </span>
+                <span>
+                  <span className="flex items-center gap-1 font-medium">
+                    {tool.title}
+                    <ArrowRight className="h-3.5 w-3.5 opacity-0 transition-opacity group-hover:opacity-100" />
+                  </span>
+                  <span className="mt-0.5 block text-sm text-muted-foreground">{tool.description}</span>
+                </span>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {popular.length > 0 && (
         <section className="mx-auto mt-12 max-w-2xl">

@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { siteConfig } from "@/config/site";
 import { registry, categoryList } from "@/lib/engine";
+import { TOOLS } from "@/lib/tools";
 
 /** Generated sitemap: home, category hubs, OCR, and every available conversion landing page. */
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -24,5 +25,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  return [...staticRoutes, ...categoryRoutes, ...conversionRoutes];
+  const toolRoutes = TOOLS.map((t) => ({
+    url: `${base}/tools/${t.slug}`,
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
+
+  return [...staticRoutes, ...categoryRoutes, ...conversionRoutes, ...toolRoutes];
 }

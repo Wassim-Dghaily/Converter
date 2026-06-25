@@ -3,6 +3,11 @@ import type { CategoryId } from "./types";
 import { imageConverter } from "./converters/image";
 import { audioConverter } from "./converters/audio";
 import { videoConverter } from "./converters/video";
+import { spreadsheetConverter } from "./converters/spreadsheet";
+import { documentConverter } from "./converters/document";
+import { imageToPdfConverter } from "./converters/image-pdf";
+import { pdfToTextConverter } from "./converters/pdf-text";
+import { pdfToImageConverter } from "./converters/pdf-image";
 
 /**
  * Phase 1 seed: registers placeholder "coming-soon" converters so the UI can present the
@@ -36,11 +41,14 @@ export function seedRegistry(): void {
   // Phase 4 — Video (LIVE) — transcode + GIF + extract-audio
   registry.register(videoConverter);
 
-  // Phase 5 — PDF / document / spreadsheet
-  comingSoon("pdf-tools", "pdf", ["pdf"], ["pdf", "jpg", "png", "txt"]);
-  comingSoon("image-to-pdf", "pdf", ["jpg", "png"], ["pdf"]);
-  comingSoon("document-text", "document", ["docx", "md", "html", "txt"], ["html", "txt", "md"]);
-  comingSoon("spreadsheet-data", "spreadsheet", ["csv", "xlsx", "json"], ["csv", "xlsx", "json"]);
+  // Phase 5a — Spreadsheet, Document, image→PDF (LIVE)
+  registry.register(spreadsheetConverter);
+  registry.register(documentConverter);
+  registry.register(imageToPdfConverter);
+  // Phase 5b-1 — PDF → text / images (LIVE) via pdf.js
+  registry.register(pdfToTextConverter);
+  registry.register(pdfToImageConverter);
+  // Phase 5b-2 — Merge / Split (multi-file/multi-output) ship as dedicated "tools", not registry converters.
 
   // Phase 6 — OCR
   comingSoon("ocr-extract", "ocr", ["jpg", "png", "webp", "bmp", "tiff", "pdf"], ["txt", "pdf"]);

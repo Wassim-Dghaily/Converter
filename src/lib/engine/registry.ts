@@ -42,6 +42,17 @@ class ConverterRegistry {
   }
 
   /**
+   * All source formats accepted by converters in a category — including cross-category inputs
+   * (e.g. the PDF category accepts JPG/PNG for image→PDF). Used to build the file picker's
+   * `accept` filter so users can drop those files.
+   */
+  sourceFormatsFor(category: CategoryId): FileFormat[] {
+    const ids = new Set<string>();
+    for (const c of this.forCategory(category)) c.from.forEach((f) => ids.add(f));
+    return [...ids].map((id) => getFormat(id)).filter((f): f is FileFormat => Boolean(f));
+  }
+
+  /**
    * Find the converter that turns `fromId` into `toId`. Prefers an available client
    * converter, then available server, then anything (coming-soon) so callers can show
    * accurate status.

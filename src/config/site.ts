@@ -12,6 +12,8 @@ export const siteConfig = {
     { label: "Audio", href: "/convert/audio" },
     { label: "Video", href: "/convert/video" },
     { label: "PDF", href: "/convert/pdf" },
+    { label: "Documents", href: "/convert/document" },
+    { label: "Spreadsheets", href: "/convert/spreadsheet" },
     { label: "OCR", href: "/ocr" },
   ],
 } as const;

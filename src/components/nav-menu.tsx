@@ -35,7 +35,7 @@ function DesktopNav({ menus }: { menus: NavMenu[] }) {
   }, []);
 
   return (
-    <nav ref={ref} className="hidden items-center gap-1 md:flex">
+    <nav ref={ref} className="hidden items-center gap-1 lg:flex">
       {menus.map((menu) => {
         const isOpen = open === menu.id;
         return (
@@ -70,6 +70,21 @@ function DesktopNav({ menus }: { menus: NavMenu[] }) {
                     All {menu.label} conversions
                     <span aria-hidden>→</span>
                   </Link>
+
+                  {menu.tools.length > 0 && (
+                    <div className="mb-2 flex flex-wrap gap-1.5">
+                      {menu.tools.map((t) => (
+                        <Link
+                          key={t.href}
+                          href={t.href}
+                          onClick={() => setOpen(null)}
+                          className="rounded-md border border-border px-2 py-1 text-xs font-medium hover:border-primary/40 hover:text-primary"
+                        >
+                          {t.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
 
                   {menu.groups.length > 0 ? (
                     <div className="grid max-h-[60vh] grid-cols-2 gap-x-4 gap-y-3 overflow-y-auto sm:grid-cols-3">
@@ -114,7 +129,7 @@ function MobileNav({ menus }: { menus: NavMenu[] }) {
   const [expanded, setExpanded] = React.useState<string | null>(null);
 
   return (
-    <div className="md:hidden">
+    <div className="lg:hidden">
       <button
         type="button"
         aria-label={open ? "Close menu" : "Open menu"}
@@ -140,7 +155,7 @@ function MobileNav({ menus }: { menus: NavMenu[] }) {
                     >
                       {menu.label}
                     </Link>
-                    {menu.groups.length > 0 && (
+                    {(menu.groups.length > 0 || menu.tools.length > 0) && (
                       <button
                         type="button"
                         aria-label={`Toggle ${menu.label} conversions`}
@@ -155,6 +170,26 @@ function MobileNav({ menus }: { menus: NavMenu[] }) {
 
                   {isExpanded && (
                     <div className="space-y-3 pb-3 pl-2">
+                      {menu.tools.length > 0 && (
+                        <div>
+                          <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                            Tools
+                          </p>
+                          <ul className="space-y-0.5">
+                            {menu.tools.map((t) => (
+                              <li key={t.href}>
+                                <Link
+                                  href={t.href}
+                                  onClick={() => setOpen(false)}
+                                  className="block rounded-md py-1.5 text-sm text-foreground/80 hover:text-foreground"
+                                >
+                                  {t.label}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                       {menu.groups.map((group) => (
                         <div key={group.title}>
                           <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">

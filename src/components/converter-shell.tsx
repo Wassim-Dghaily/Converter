@@ -50,11 +50,7 @@ export function ConverterShell({
 }) {
   const category = CATEGORIES[categoryId];
   const accept = React.useMemo(
-    () =>
-      [...FORMATS.values()]
-        .filter((f) => f.category === categoryId)
-        .map((f) => f.ext)
-        .join(","),
+    () => registry.sourceFormatsFor(categoryId).map((f) => f.ext).join(","),
     [categoryId],
   );
 

@@ -28,8 +28,8 @@ image, PDF, Word, PowerPoint, Excel, and more.
 - **Branded output filenames.** Converted files keep the original base name plus a brand
   mark: `originalname-yallaconvert.ext` (e.g. `vacation.png` → `vacation-yallaconvert.jpg`).
   Shared helper `brandedFilename()` — all converters must use it.
-- **Category nav dropdowns (mega-menu).** Each main category (Image/Audio/Video/PDF/OCR) in the
-  header opens a dropdown (hover on desktop, tap on mobile) listing the general category page
+- **Category nav dropdowns (mega-menu).** Each main category (Image/Audio/Video/PDF/Documents/
+  Spreadsheets/OCR) in the header opens a dropdown (hover on desktop, tap on mobile) listing the general category page
   plus every specific conversion **grouped by source format** (all "PNG to …" under a PNG title,
   etc.). Driven by `buildNavMenus()`; component `nav-menu.tsx`. Done 2026-06-25.
 
@@ -183,10 +183,33 @@ Status legend: ☐ not started · ◐ in progress · ☑ done
 - **Limitations (logged §7):** single-thread ffmpeg.wasm is slow + memory-bound for large/long
   videos; webm (vp8/9) encoding especially slow. No trim UI yet. Needs real-file click-test for big videos.
 
-### ☐ Phase 5 — PDF & document tools
-- pdf-lib + pdf.js (merge/split/compress/rotate/reorder, images↔PDF, PDF→images, extract text).
-- DOCX→HTML/text (mammoth), Markdown/HTML, HTML→PDF.
-- Spreadsheets/data via SheetJS (CSV/XLSX/ODS/JSON).
+### ◐ Phase 5 — PDF & document tools  *(5a done 2026-06-25; 5b pending)*
+**Phase 5a — A→B conversions (no-worker libs) — DONE:**
+- ☑ **Spreadsheets** ([spreadsheet.ts](src/lib/engine/converters/spreadsheet.ts)) — CSV ↔ XLSX ↔ JSON via SheetJS. Category LIVE.
+- ☑ **Documents** ([document.ts](src/lib/engine/converters/document.ts)) — DOCX/MD/HTML → HTML or TXT
+  (mammoth browser build + marked + DOMParser strip). Category LIVE. (DOCX→HTML is content-only; rich Office→PDF = §11.)
+- ☑ **image→PDF** ([image-pdf.ts](src/lib/engine/converters/image-pdf.ts)) — JPG/PNG → 1-page PDF via pdf-lib. PDF category partially live.
+- ☑ Fixed file-picker `accept` to use converter source formats (`registry.sourceFormatsFor`) so the
+  PDF page accepts image inputs. Added shared `asBlob()` byte→Blob helper. Node smoke test 5/5.
+
+**Phase 5b-1 — pdf.js conversions (fit A→B UI) — DONE (2026-06-25):**
+- ☑ **PDF → Text** ([pdf-text.ts](src/lib/engine/converters/pdf-text.ts)) — pdf.js text layer extraction.
+- ☑ **PDF → Images** ([pdf-image.ts](src/lib/engine/converters/pdf-image.ts)) — renders pages to PNG/JPG;
+  single page → image, multi-page → **ZIP** (JSZip). Quality (scale) option.
+- ☑ Self-hosted pdf.js worker (`public/pdf/`, via copy-assets.mjs); `pdf-client.ts` sets `workerSrc`
+  to an absolute origin URL. **Headlessly verified** (Playwright): PDF→TXT extracted the right text;
+  PDF→PNG produced a 2-page zip.
+
+**Phase 5b-2 — PDF *tools* — DONE (2026-06-25):**
+- ☑ New **tools** subsystem ([src/lib/tools/](src/lib/tools/)) — the multi-file/multi-output sibling of
+  converters. A `Tool` takes N files → one output (zips internally). Registry + `/tools/[tool]` routes.
+- ☑ **Merge PDF** (2–50 files → one, reorderable) and **Split PDF** (1 → zip of per-page PDFs), via
+  pdf-lib + JSZip. New **`ToolShell`** UI (multi-file add, reorder ↑/↓, remove, progress, download).
+- ☑ Tools surfaced on the category hub ("PDF tools" cards), in the nav dropdowns, and the sitemap.
+- ☑ Node smoke test 3/3 (merge→6 pages; split→4 valid 1-page PDFs in a zip). Build green (129 pages).
+- **Still later:** compress / rotate / reorder pages, ranges for split.
+
+**Still later:** HTML→PDF, html→md (turndown), ODS, richer Markdown.
 
 ### ☐ Phase 6 — OCR
 - tesseract.js image→text + searchable PDF; language picker; web-worker.
@@ -269,6 +292,16 @@ Status legend: ☐ not started · ◐ in progress · ☑ done
 - **2026-06-25** — **Phase 4 complete.** Video conversion live (transcode + GIF + extract-audio)
   via ffmpeg.wasm; added generic `select` option (Resolution). Headlessly verified webm→mp4 and
   webm→gif. Build green. *(Next: Phase 5 — PDF & document tools, or polish.)*
+- **2026-06-25** — **Phase 5a complete.** Spreadsheets (CSV/XLSX/JSON), Documents (DOCX/MD/HTML→HTML/TXT),
+  and image→PDF now live (SheetJS, mammoth, marked, pdf-lib — all no-worker). Node smoke test 5/5,
+  build green. New SEO pages auto-generated (csv-to-xlsx, docx-to-html, jpg-to-pdf, …).
+  *(Next: Phase 6 — OCR (tesseract.js); or Phase 5b — PDF tools UI.)*
+- **2026-06-25** — **Phase 5b-1 complete.** PDF→Text and PDF→Images (PNG/JPG, multi-page→zip) live
+  via pdf.js 6 (self-hosted worker) + JSZip. Headlessly verified both. Renamed the asset-copy script
+  to `copy-assets.mjs` (ffmpeg + pdf worker). 127 static pages. *(Next: Phase 5b-2 — Merge/Split tools UI.)*
+- **2026-06-25** — **Phase 5b-2 complete.** PDF Merge + Split tools live via a new `tools` subsystem
+  + `ToolShell` (multi-file). Node smoke 3/3, build green (129 pages). Phase 5 fully done.
+  *(Next: Phase 6 — OCR (tesseract.js).)*
 
 ## 9. Bugs Faced
 - **2026-06-25 — Audio conversion fails in the browser (RESOLVED).** mp3 → any format returned
@@ -302,6 +335,16 @@ Status legend: ☐ not started · ◐ in progress · ☑ done
 - **Testing WASM codecs in Node:** they `fetch` their `.wasm`, which Node can't do for `file://`.
   Pass the bytes manually: wasm-bindgen (png/resize) via `init(bytes)`; emscripten (jpeg/webp/avif)
   via `init({ wasmBinary: bytes })`, with separate enc/dec modules. Browser is unaffected (real fetch).
+- **RSC: don't pass functions as client-component props (Phase 5b-2).** Passing a whole `Tool`
+  (which has a `run()` method) from a Server Component to the client `ToolShell` made Next's static
+  generation hang/timeout (it can't serialize functions). Fix: pass only the `slug` string and look
+  the tool up from the client-side registry inside the component (same pattern `ConverterShell` uses
+  with `categoryId`). General rule: client components get serializable props only.
+- **pdf.js v6 API (Phase 5b):** `page.render()` takes `{ canvas, viewport }` (not `canvasContext`);
+  destroy the document via `loadingTask.destroy()` (no `doc.destroy()`). Worker is a plain script
+  (no dynamic blob import), so self-hosting + `GlobalWorkerOptions.workerSrc = ${origin}/pdf/...`
+  works without the ffmpeg-style webpack pain. Format-id slugs: text is `txt`, so the SEO route is
+  `/pdf-to-txt` (not `/pdf-to-text`).
 - **ffmpeg.wasm (Phase 3) notes:** (1) Its worker is always `type: "module"`, so it loads the
   **ESM** core via `import()` — self-host `@ffmpeg/core/dist/esm/*` and pass blob URLs from
   `toBlobURL`. (2) ffmpeg runs transcoding in its **own** internal worker, so converters call it

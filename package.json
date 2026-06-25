@@ -4,9 +4,9 @@
   "private": true,
   "description": "YallaConvert — fast, private, in-browser file conversion.",
   "scripts": {
-    "predev": "node scripts/copy-ffmpeg.mjs",
+    "predev": "node scripts/copy-assets.mjs",
     "dev": "next dev",
-    "prebuild": "node scripts/copy-ffmpeg.mjs",
+    "prebuild": "node scripts/copy-assets.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -24,11 +24,17 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "heic2any": "^0.0.4",
+    "jszip": "^3.10.1",
     "lucide-react": "^0.445.0",
+    "mammoth": "^1.12.0",
+    "marked": "^18.0.5",
     "next": "^14.2.35",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^6.0.227",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "tailwind-merge": "^2.5.4"
+    "tailwind-merge": "^2.5.4",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/node": "^20.16.11",
