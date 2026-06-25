@@ -1,6 +1,7 @@
 import { registry } from "./registry";
 import type { CategoryId } from "./types";
 import { imageConverter } from "./converters/image";
+import { audioConverter } from "./converters/audio";
 
 /**
  * Phase 1 seed: registers placeholder "coming-soon" converters so the UI can present the
@@ -28,13 +29,8 @@ export function seedRegistry(): void {
   // Image targets we don't encode client-side yet (gif/bmp/tiff/ico output).
   comingSoon("image-extra-out", "image", ["jpg", "png", "webp", "avif", "tiff", "ico"], ["gif", "bmp", "tiff", "ico"]);
 
-  // Phase 3 — Audio
-  comingSoon(
-    "audio-transcode",
-    "audio",
-    ["mp3", "wav", "aac", "m4a", "ogg", "opus", "flac"],
-    ["mp3", "wav", "aac", "m4a", "ogg", "opus", "flac"],
-  );
+  // Phase 3 — Audio (LIVE)
+  registry.register(audioConverter);
 
   // Phase 4 — Video
   comingSoon(

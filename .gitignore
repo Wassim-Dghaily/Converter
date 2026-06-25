@@ -31,6 +31,9 @@ yarn-error.log*
 # netlify
 .netlify
 
+# self-hosted ffmpeg.wasm core (copied from node_modules by scripts/copy-ffmpeg.mjs)
+/public/ffmpeg/
+
 # editors
 .vscode/*
 !.vscode/extensions.json

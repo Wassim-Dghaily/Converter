@@ -4,13 +4,18 @@
   "private": true,
   "description": "YallaConvert — fast, private, in-browser file conversion.",
   "scripts": {
+    "predev": "node scripts/copy-ffmpeg.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/copy-ffmpeg.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@ffmpeg/core": "^0.12.10",
+    "@ffmpeg/ffmpeg": "^0.12.15",
+    "@ffmpeg/util": "^0.12.2",
     "@jsquash/avif": "^2.1.1",
     "@jsquash/jpeg": "^1.6.0",
     "@jsquash/png": "^3.1.1",

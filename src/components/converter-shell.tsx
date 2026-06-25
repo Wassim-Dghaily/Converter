@@ -62,6 +62,7 @@ export function ConverterShell({
   const [targetId, setTargetId] = React.useState<string>("");
   const [busy, setBusy] = React.useState(false);
   const [progress, setProgress] = React.useState(0);
+  const [stage, setStage] = React.useState("");
   const [error, setError] = React.useState<string | null>(null);
   const [result, setResult] = React.useState<ConversionResult | null>(null);
 
@@ -111,16 +112,21 @@ export function ConverterShell({
     setError(null);
     setResult(null);
     setProgress(0);
+    setStage("");
     try {
       const res = await converter.convert({
         file,
         from: source,
         to: target,
         options: optionValues,
-        onProgress: (p) => setProgress(p.ratio),
+        onProgress: (p) => {
+          setProgress(p.ratio);
+          if (p.stage) setStage(p.stage);
+        },
       });
       setResult(res);
     } catch (err) {
+      console.error("[YallaConvert] conversion error:", err);
       setError(err instanceof Error ? err.message : "Conversion failed.");
     } finally {
       setBusy(false);
@@ -231,12 +237,24 @@ export function ConverterShell({
               )}
 
               {busy && (
-                <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-                  <div className="h-full bg-primary transition-all" style={{ width: `${Math.round(progress * 100)}%` }} />
+                <div className="space-y-1.5">
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+                    <div className="h-full bg-primary transition-all" style={{ width: `${Math.round(progress * 100)}%` }} />
+                  </div>
+                  {stage && (
+                    <p className="text-center text-xs text-muted-foreground">
+                      {stage}
+                      {progress > 0 && progress < 1 ? ` · ${Math.round(progress * 100)}%` : ""}
+                    </p>
+                  )}
                 </div>
               )}
 
-              {error && <p className="text-center text-sm text-red-600 dark:text-red-400">{error}</p>}
+              {error && (
+                <p className="whitespace-pre-line rounded-lg bg-red-500/10 px-3 py-2 text-center text-sm text-red-600 dark:text-red-400">
+                  {error}
+                </p>
+              )}
 
               {result ? (
                 <Button onClick={download} className="w-full" size="lg">

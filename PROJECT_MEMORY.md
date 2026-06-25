@@ -28,6 +28,10 @@ image, PDF, Word, PowerPoint, Excel, and more.
 - **Branded output filenames.** Converted files keep the original base name plus a brand
   mark: `originalname-yallaconvert.ext` (e.g. `vacation.png` → `vacation-yallaconvert.jpg`).
   Shared helper `brandedFilename()` — all converters must use it.
+- **Category nav dropdowns (mega-menu).** Each main category (Image/Audio/Video/PDF/OCR) in the
+  header opens a dropdown (hover on desktop, tap on mobile) listing the general category page
+  plus every specific conversion **grouped by source format** (all "PNG to …" under a PNG title,
+  etc.). Driven by `buildNavMenus()`; component `nav-menu.tsx`. Done 2026-06-25.
 
 ---
 
@@ -153,8 +157,19 @@ Status legend: ☐ not started · ◐ in progress · ☑ done
 - **Still coming-soon (this category):** gif/bmp/tiff/ico **output**, animated GIF, batch/multi-file.
 - **Needs a real browser click-test** (can't headlessly): the canvas (gif/bmp) and HEIC paths.
 
-### ☐ Phase 3 — Audio conversion
-- ffmpeg.wasm (single+multi-thread); audio formats; extract-from-video; bitrate options.
+### ☑ Phase 3 — Audio conversion  *(done 2026-06-25)*
+- ☑ Live audio transcoder ([src/lib/engine/converters/audio.ts](src/lib/engine/converters/audio.ts))
+  via **ffmpeg.wasm 0.12** (single-thread core). Formats: mp3/wav/aac/m4a/ogg/opus/flac interconvert.
+  Bitrate option for lossy targets. Codec inferred from output extension; `-vn` drops any video stream.
+- ☑ **Self-hosted single-thread core** in `public/ffmpeg/` (copied from node_modules by
+  `scripts/copy-ffmpeg.mjs` via `predev`/`prebuild` hooks; gitignored, ~32 MB). No CDN dependency,
+  no cross-origin isolation needed → ads/fonts stay unblocked (§7).
+- ☑ Singleton loader (`ffmpeg-client.ts`) loads the core once per session; progress + a "stage"
+  label surfaced in `ConverterShell` (shows the first-run 32 MB load).
+- ☑ Build green (79 static pages; +42 audio conversion landing pages).
+- **Extract-audio-from-video** stays under Video (Phase 4).
+- ☑ **Browser-verified end-to-end** (2026-06-25) via headless Chromium: WAV→MP3 produced a real
+  download. Required a worker-loading fix — see Bugs Faced (webpack + ffmpeg worker `import`).
 
 ### ☐ Phase 4 — Video conversion
 - ffmpeg.wasm; video formats, video→GIF, video→audio, compress/trim/resolution;
@@ -235,9 +250,25 @@ Status legend: ☐ not started · ◐ in progress · ☑ done
   (above) and built them: registry-driven per-conversion **SEO landing pages** (`/[conversion]`,
   24 image pages live + sitemap + internal links) and **branded output filenames**
   (`name-yallaconvert.ext`). Build green (37 static pages). *(Next: Phase 3 — audio.)*
+- **2026-06-25** — **Phase 3 complete.** Audio conversion live via ffmpeg.wasm (self-hosted
+  single-thread core, 7 formats, bitrate option). Build green, 79 static pages.
+- **2026-06-25** — Added **category nav dropdown mega-menus** (grouped by source format).
+- **2026-06-25** — **Fixed the audio "conversion failed" bug** (webpack breaking ffmpeg's worker
+  `import`). Reproduced + verified the fix headlessly with Playwright/Chromium (WAV→MP3 download).
+  Self-hosted ffmpeg worker via `classWorkerURL`. *(Next: Phase 4 — video, same ffmpeg core/loader,
+  so this fix carries over.)*
 
 ## 9. Bugs Faced
-- _(none logged yet)_
+- **2026-06-25 — Audio conversion fails in the browser (RESOLVED).** mp3 → any format returned
+  "conversion failed." Root cause (found by reproducing headlessly with Playwright + Chromium):
+  **webpack rewrites the dynamic `import(coreURL)` inside ffmpeg's bundled worker**, so the blob-URL
+  core couldn't load → `Cannot find module 'blob:…'`. The core files themselves served fine (200).
+  **Fix:** self-host ffmpeg's ESM worker + siblings to `public/ffmpeg/pkg/` (via copy-ffmpeg.mjs) and
+  pass `classWorkerURL` so webpack never touches the worker and its `import()` stays native. Second
+  gotcha: `classWorkerURL` must be an **absolute http URL** (`${location.origin}/ffmpeg/pkg/worker.js`),
+  because ffmpeg resolves it with `new URL(classWorkerURL, import.meta.url)` and webpack replaces
+  `import.meta.url` with a `file://` path (a root-relative path resolved to `file:///…` → blocked).
+  **Verified end-to-end** (WAV→MP3 produced a real download in headless Chromium).
 
 ## 10. Lessons Learned
 - The old app's UI **over-promised** (fake format menus, dead `convertTo()`, "batch
@@ -259,6 +290,13 @@ Status legend: ☐ not started · ◐ in progress · ☑ done
 - **Testing WASM codecs in Node:** they `fetch` their `.wasm`, which Node can't do for `file://`.
   Pass the bytes manually: wasm-bindgen (png/resize) via `init(bytes)`; emscripten (jpeg/webp/avif)
   via `init({ wasmBinary: bytes })`, with separate enc/dec modules. Browser is unaffected (real fetch).
+- **ffmpeg.wasm (Phase 3) notes:** (1) Its worker is always `type: "module"`, so it loads the
+  **ESM** core via `import()` — self-host `@ffmpeg/core/dist/esm/*` and pass blob URLs from
+  `toBlobURL`. (2) ffmpeg runs transcoding in its **own** internal worker, so converters call it
+  from the main thread — our generic `conversion.worker.ts` is NOT needed for ffmpeg (kept for
+  future CPU-bound JS work). (3) TS 5.6 types `ffmpeg.readFile()`'s `Uint8Array` as possibly
+  `SharedArrayBuffer`-backed, which isn't a valid `BlobPart` — copy into a fresh `new Uint8Array(len)`
+  before `new Blob([...])`. (4) Core is ~32 MB → first conversion shows a "Loading…" stage.
 
 ## 11. Process / Working Rules
 - **The user handles ALL git actions** (commit/push). Claude makes file changes only and

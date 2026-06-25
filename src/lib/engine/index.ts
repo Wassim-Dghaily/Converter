@@ -11,6 +11,7 @@ seedRegistry();
 export * from "./types";
 export { FORMATS, getFormat, format } from "./formats";
 export { CATEGORIES, CATEGORY_ORDER, categoryList } from "./categories";
+export { buildNavMenus, NAV_CATEGORIES, type NavMenu, type NavMenuGroup, type NavMenuItem } from "./nav";
 export { registry, pairSlug, type ConversionPair } from "./registry";
 export { brandedFilename, FILENAME_BRAND } from "./filename";
 export { runConversion } from "./run-conversion";
