@@ -3,9 +3,11 @@
 import * as React from "react";
 import { UploadCloud, X, ArrowUp, ArrowDown, Download, Loader2, ShieldCheck, FileIcon, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { getFormat, type ConversionResult } from "@/lib/engine";
-import { toolBySlug } from "@/lib/tools";
+import { getFormat } from "@/lib/engine";
+import { toolBySlug, type ToolResult, type ToolFile } from "@/lib/tools";
 import { cn, formatBytes } from "@/lib/utils";
+
+const safeName = (name: string) => name.replace(/[\\/]/g, "_");
 
 /**
  * Receives only the tool `slug` (a string) and resolves the actual tool — including its `run`
@@ -16,7 +18,10 @@ export function ToolShell({ slug }: { slug: string }) {
   const tool = toolBySlug(slug);
 
   const accept = React.useMemo(
-    () => (tool ? tool.accept.map((id) => getFormat(id)?.ext).filter(Boolean).join(",") : ""),
+    () =>
+      tool && tool.accept.length
+        ? tool.accept.map((id) => getFormat(id)?.ext).filter(Boolean).join(",")
+        : "",
     [tool],
   );
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -26,7 +31,7 @@ export function ToolShell({ slug }: { slug: string }) {
   const [progress, setProgress] = React.useState(0);
   const [stage, setStage] = React.useState("");
   const [error, setError] = React.useState<string | null>(null);
-  const [result, setResult] = React.useState<ConversionResult | null>(null);
+  const [result, setResult] = React.useState<ToolResult | null>(null);
 
   if (!tool) return null;
   const t = tool; // narrowed to Tool — safe inside callbacks/JSX below
@@ -73,14 +78,22 @@ export function ToolShell({ slug }: { slug: string }) {
     }
   }
 
-  function download() {
-    if (!result) return;
-    const url = URL.createObjectURL(result.blob);
+  function downloadFile(file: ToolFile) {
+    const url = URL.createObjectURL(file.blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = result.filename;
+    a.download = safeName(file.filename);
     a.click();
     URL.revokeObjectURL(url);
+  }
+
+  async function downloadAll() {
+    if (!result) return;
+    const JSZip = (await import("jszip")).default;
+    const zip = new JSZip();
+    result.files.forEach((f) => zip.file(safeName(f.filename), f.blob));
+    const blob = await zip.generateAsync({ type: "blob" });
+    downloadFile({ blob, filename: "files-yallaconvert.zip" });
   }
 
   function reset() {
@@ -200,9 +213,37 @@ export function ToolShell({ slug }: { slug: string }) {
 
       {result ? (
         <div className="space-y-2">
-          <Button onClick={download} className="w-full" size="lg">
-            <Download className="h-4 w-4" /> Download {result.filename}
-          </Button>
+          {result.files.length === 1 ? (
+            <Button onClick={() => downloadFile(result.files[0])} className="w-full" size="lg">
+              <Download className="h-4 w-4" /> Download {result.files[0].filename}
+            </Button>
+          ) : (
+            <>
+              <div className="rounded-2xl border border-border bg-card">
+                <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
+                  <span className="text-sm font-medium">{result.files.length} files</span>
+                  <button onClick={downloadAll} className="text-sm font-medium text-primary hover:underline">
+                    Download all (.zip)
+                  </button>
+                </div>
+                <ul className="max-h-72 divide-y divide-border overflow-y-auto">
+                  {result.files.map((file, i) => (
+                    <li key={`${file.filename}-${i}`} className="flex items-center gap-3 px-4 py-2">
+                      <span className="min-w-0 flex-1 truncate text-sm">{file.filename}</span>
+                      <span className="text-xs text-muted-foreground">{formatBytes(file.blob.size)}</span>
+                      <button
+                        onClick={() => downloadFile(file)}
+                        aria-label={`Download ${file.filename}`}
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
+                      >
+                        <Download className="h-4 w-4" />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </>
+          )}
           <Button onClick={reset} variant="outline" className="w-full">
             <RotateCcw className="h-4 w-4" /> Start over
           </Button>

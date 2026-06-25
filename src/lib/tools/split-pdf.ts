@@ -1,5 +1,4 @@
-import type { Tool, ToolInput } from "./types";
-import type { ConversionResult } from "@/lib/engine";
+import type { Tool, ToolInput, ToolResult } from "./types";
 
 /** Split a PDF into one PDF per page, returned as a ZIP (pdf-lib + JSZip, no worker). */
 export const splitPdfTool: Tool = {
@@ -12,7 +11,7 @@ export const splitPdfTool: Tool = {
   minFiles: 1,
   maxFiles: 1,
   action: "Split",
-  async run({ files, onProgress }: ToolInput): Promise<ConversionResult> {
+  async run({ files, onProgress }: ToolInput): Promise<ToolResult> {
     const file = files[0];
     const { PDFDocument } = await import("pdf-lib");
     const JSZip = (await import("jszip")).default;
@@ -33,6 +32,6 @@ export const splitPdfTool: Tool = {
     onProgress?.({ ratio: 0.95, stage: "Zipping" });
     const blob = await zip.generateAsync({ type: "blob" });
     onProgress?.({ ratio: 1, stage: "Done" });
-    return { blob, filename: `${base}-yallaconvert-split.zip` };
+    return { files: [{ blob, filename: `${base}-yallaconvert-split.zip` }] };
   },
 };

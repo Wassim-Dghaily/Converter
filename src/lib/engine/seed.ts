@@ -54,6 +54,5 @@ export function seedRegistry(): void {
   // Phase 6 — OCR (LIVE) — image → text in 100+ languages via tesseract.js
   registry.register(ocrConverter);
 
-  // Phase 7 — Archive
-  comingSoon("archive-zip", "archive", ["zip"], ["zip"]);
+  // Phase 7 — Archive: handled by tools (Create ZIP / Extract ZIP), not registry converters.
 }

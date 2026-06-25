@@ -10,6 +10,7 @@ export const NAV_CATEGORIES: CategoryId[] = [
   "pdf",
   "document",
   "spreadsheet",
+  "archive",
   "ocr",
 ];
 

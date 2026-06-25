@@ -12,6 +12,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { categoryList, registry } from "@/lib/engine";
+import { toolsForCategory } from "@/lib/tools";
 import { cn } from "@/lib/utils";
 
 const ICONS: Record<string, LucideIcon> = {
@@ -30,7 +31,8 @@ export function CategoryGrid() {
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {categoryList().map((category) => {
         const Icon = ICONS[category.icon] ?? FileText;
-        const available = registry.isCategoryAvailable(category.id);
+        const available =
+          registry.isCategoryAvailable(category.id) || toolsForCategory(category.id).length > 0;
         return (
           <Link
             key={category.id}

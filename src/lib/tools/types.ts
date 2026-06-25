@@ -1,9 +1,15 @@
-import type {
-  CategoryId,
-  ConversionProgress,
-  ConversionResult,
-  ConverterOption,
-} from "@/lib/engine";
+import type { CategoryId, ConversionProgress, ConverterOption } from "@/lib/engine";
+
+/** One output file produced by a tool. */
+export interface ToolFile {
+  blob: Blob;
+  filename: string;
+}
+
+/** A tool's result — one file (merge, zip) or many (extract). */
+export interface ToolResult {
+  files: ToolFile[];
+}
 
 /**
  * A "tool" is the multi-file / multi-output sibling of a Converter. Where a Converter is a
@@ -31,5 +37,5 @@ export interface Tool {
   /** Verb for the action button, e.g. "Merge", "Split". */
   action: string;
   options?: ConverterOption[];
-  run(input: ToolInput): Promise<ConversionResult>;
+  run(input: ToolInput): Promise<ToolResult>;
 }

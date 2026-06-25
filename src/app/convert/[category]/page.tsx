@@ -30,6 +30,7 @@ export default function CategoryPage({ params }: { params: { category: string } 
   const category = CATEGORIES[id];
   const popular = registry.pairs({ availableOnly: true, category: id });
   const tools = toolsForCategory(id);
+  const hasConverters = registry.forCategory(id).length > 0;
 
   return (
     <div className="container py-12 md:py-16">
@@ -37,10 +38,10 @@ export default function CategoryPage({ params }: { params: { category: string } 
         <h1 className="text-3xl font-bold tracking-tight md:text-4xl">{category.label} Converter</h1>
         <p className="mt-2 text-muted-foreground">{category.blurb}</p>
       </header>
-      <ConverterShell categoryId={id} />
+      {hasConverters && <ConverterShell categoryId={id} />}
 
       {tools.length > 0 && (
-        <section className="mx-auto mt-12 max-w-2xl">
+        <section className={`mx-auto max-w-2xl ${hasConverters ? "mt-12" : ""}`}>
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
             {category.label} tools
           </h2>

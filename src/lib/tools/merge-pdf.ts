@@ -1,5 +1,4 @@
-import type { Tool, ToolInput } from "./types";
-import type { ConversionResult } from "@/lib/engine";
+import type { Tool, ToolInput, ToolResult } from "./types";
 import { asBlob } from "@/lib/engine";
 
 /** Merge several PDFs into one, in the given order, via pdf-lib (no worker). */
@@ -13,7 +12,7 @@ export const mergePdfTool: Tool = {
   minFiles: 2,
   maxFiles: 50,
   action: "Merge",
-  async run({ files, onProgress }: ToolInput): Promise<ConversionResult> {
+  async run({ files, onProgress }: ToolInput): Promise<ToolResult> {
     const { PDFDocument } = await import("pdf-lib");
     const merged = await PDFDocument.create();
 
@@ -27,6 +26,6 @@ export const mergePdfTool: Tool = {
     onProgress?.({ ratio: 0.95, stage: "Saving" });
     const bytes = await merged.save();
     onProgress?.({ ratio: 1, stage: "Done" });
-    return { blob: asBlob(bytes, "application/pdf"), filename: "merged-yallaconvert.pdf" };
+    return { files: [{ blob: asBlob(bytes, "application/pdf"), filename: "merged-yallaconvert.pdf" }] };
   },
 };

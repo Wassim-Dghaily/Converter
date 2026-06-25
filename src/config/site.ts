@@ -14,6 +14,7 @@ export const siteConfig = {
     { label: "PDF", href: "/convert/pdf" },
     { label: "Documents", href: "/convert/document" },
     { label: "Spreadsheets", href: "/convert/spreadsheet" },
+    { label: "Archives", href: "/convert/archive" },
     { label: "OCR", href: "/ocr" },
   ],
 } as const;

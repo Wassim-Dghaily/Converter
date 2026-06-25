@@ -220,8 +220,14 @@ Status legend: ☐ not started · ◐ in progress · ☑ done
 - **Deferred:** searchable-PDF output, OCR-on-PDF (render pages then OCR), self-hosting the
   tesseract engine/lang data (currently CDN — revisit in Phase 8).
 
-### ☐ Phase 7 — Archives & data formats
-- ZIP create/extract (JSZip); stretch: 7z/RAR extract (libarchive.js); JSON/CSV/XML/YAML.
+### ☑ Phase 7 — Archives  *(done 2026-06-25)*
+- ☑ **Create ZIP** (any files → one .zip) and **Extract ZIP** (.zip → file list) tools via JSZip.
+  Archive category is **tools-only** (no registry converters): the hub page skips `ConverterShell`
+  and shows the tools; CategoryGrid/nav treat "has tools" as available.
+- ☑ Extended the tools model to **multi-output** (`ToolResult.files[]`): `ToolShell` shows a single
+  download for one file, or a file list (per-file download + "Download all .zip") for many — Extract
+  ZIP uses this. Refactored merge/split to the new shape. Node smoke 3/3; build green (136 pages).
+- **Stretch (later):** 7z/RAR extract (libarchive.js); data formats (XML/YAML).
 
 ### ◐ Phase 8 — UX polish, SEO, performance, a11y, legal
 - ☑ **Per-conversion SEO landing pages** built early (2026-06-25): registry-driven
@@ -311,6 +317,10 @@ Status legend: ☐ not started · ◐ in progress · ☑ done
 - **2026-06-25** — **Phase 6 complete.** OCR live via tesseract.js 7 (image→text, 14-language picker).
   Headlessly verified (recognized "HELLO OCR 12345" exactly). Build green, 134 static pages.
   *(Next: Phase 7 — Archives (zip/unzip); or Phase 8 — UX/SEO/perf/legal polish.)*
+- **2026-06-25** — **Phase 7 complete.** Create ZIP + Extract ZIP tools (JSZip); tools model now
+  supports multi-output (file list + download-all). Archives in nav. Build green, 136 pages.
+  **All conversion/tool categories are now live.** *(Next: Phase 8 — polish: legal pages, SEO depth,
+  perf, a11y, optional self-hosting of OCR/ffmpeg assets.)*
 
 ## 9. Bugs Faced
 - **2026-06-25 — Audio conversion fails in the browser (RESOLVED).** mp3 → any format returned
