@@ -263,9 +263,15 @@ subscriptions are **deferred to post-launch**.
   configured. Privacy policy updated for cookies/ads. (No COEP set → AdSense unaffected, §7.)
 - **Deferred to post-launch:** accounts, Stripe subscriptions, Pro gating, server-enforced free-tier limits.
 
-### ☐ Phase 10 — Launch
-- Domain (GoDaddy/Netlify) + DNS + HTTPS, production env, monitoring + error tracking (Sentry),
-  pre-launch QA checklist, cross-browser/mobile testing.
+### ◐ Phase 10 — Launch  *(deploying 2026-06-25)*
+- ☑ **Switched to static export** (`output: "export"` → `out/`). The whole app is static + client-side,
+  so no Next server runtime / Netlify Functions / Blobs. `netlify.toml`: publish `out`, dropped the
+  `@netlify/plugin-nextjs` plugin, added static-asset cache headers. Build green; `out/` includes the
+  self-hosted ffmpeg (31 MB) + pdf.js workers, all 139 pages, sitemap, 404, icon.
+- ☑ Deploying via **Netlify CLI** (collaborator, not repo owner → can't git-connect): site `yallaconvert`,
+  `netlify deploy --prod --dir=out`. Free `yallaconvert.netlify.app` subdomain, no custom domain yet.
+- ☐ Remaining: live cross-browser/mobile QA on the deployed URL (esp. ffmpeg/pdf/OCR over HTTPS),
+  custom domain later, error monitoring.
 
 ### ☐ Phase 11 — Server-side conversion service *(post-launch; details TBD at this phase)*
 - Containerized backend with ffmpeg/LibreOffice/ImageMagick/Ghostscript/Calibre/Tesseract.
@@ -383,6 +389,11 @@ subscriptions are **deferred to post-launch**.
 - **Testing WASM codecs in Node:** they `fetch` their `.wasm`, which Node can't do for `file://`.
   Pass the bytes manually: wasm-bindgen (png/resize) via `init(bytes)`; emscripten (jpeg/webp/avif)
   via `init({ wasmBinary: bytes })`, with separate enc/dec modules. Browser is unaffected (real fetch).
+- **Deploy as a static export (Phase 10).** Local `netlify deploy --build` of a Next.js site failed at
+  the Blobs-upload step (`MissingBlobsEnvironmentError`) because the Next runtime wants Netlify Blobs.
+  Fix: since the app is 100% static (every page SSG, all conversions client-side, no API/SSR), set
+  `output: "export"`, publish the `out/` folder, and drop `@netlify/plugin-nextjs`. No functions/blobs,
+  simpler + cheaper. Deploy with `netlify deploy --prod --dir=out`. (No `next/image` used, so export is clean.)
 - **RSC: don't pass functions as client-component props (Phase 5b-2).** Passing a whole `Tool`
   (which has a `run()` method) from a Server Component to the client `ToolShell` made Next's static
   generation hang/timeout (it can't serialize functions). Fix: pass only the `slug` string and look

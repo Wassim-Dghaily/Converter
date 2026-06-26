@@ -1,27 +1,39 @@
-# Netlify configuration for YallaConvert (Next.js)
-# The official @netlify/plugin-nextjs is auto-installed by Netlify when it detects Next.js.
+# Netlify configuration for YallaConvert.
+# The app is a fully static Next.js export (output: "export") — pure HTML/JS on the CDN,
+# no serverless functions, no Netlify Blobs.
 
 [build]
   command = "npm run build"
-  publish = ".next"
+  publish = "out"
 
 [build.environment]
   # Pin a Netlify-supported Node LTS (local builds use 24; 20 is safe for all deps).
   NODE_VERSION = "20"
 
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
-
-# --- Security headers (mirror of next.config.mjs for production) ---
-# NOTE on cross-origin isolation: we intentionally do NOT set
-#   Cross-Origin-Opener-Policy: same-origin
-#   Cross-Origin-Embedder-Policy: require-corp
-# globally, because require-corp breaks third-party resources (ads, fonts, embeds).
-# The multi-threaded ffmpeg.wasm core (needs SharedArrayBuffer) will get a route-scoped
-# isolation strategy in the audio/video phases. See PROJECT_MEMORY.md §7.
+# --- Security headers ---
+# NOTE: we intentionally do NOT set cross-origin isolation (COOP same-origin + COEP require-corp)
+# because require-corp breaks third-party resources (ads, fonts). We use the single-thread
+# ffmpeg.wasm core, which doesn't need SharedArrayBuffer. See PROJECT_MEMORY.md §7.
 [[headers]]
   for = "/*"
   [headers.values]
     X-Content-Type-Options = "nosniff"
     X-Frame-Options = "SAMEORIGIN"
     Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Long-cache the hashed build assets.
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Conversion engine assets (stable filenames) — cache but allow revalidation.
+[[headers]]
+  for = "/ffmpeg/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/pdf/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
