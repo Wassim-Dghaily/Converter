@@ -40,10 +40,12 @@ export default function PrivacyPage() {
         </div>
 
         <div>
-          <h2 className="text-base font-semibold text-foreground">Analytics &amp; cookies</h2>
+          <h2 className="text-base font-semibold text-foreground">Analytics &amp; ads</h2>
           <p className="mt-2">
-            We aim to keep tracking minimal. If we add privacy-respecting analytics or advertising in the future, we
-            will update this policy and provide clear controls where required.
+            To keep YallaConvert free, we may use privacy-respecting analytics and display ads. These can set cookies,
+            so we ask for your consent first with a banner — you can <strong className="text-foreground">Accept</strong>{" "}
+            or <strong className="text-foreground">Decline</strong>, and nothing that tracks you loads until you accept.
+            This never affects your files, which are always processed privately on your device.
           </p>
         </div>
 

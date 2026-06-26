@@ -5,6 +5,10 @@
   command = "npm run build"
   publish = ".next"
 
+[build.environment]
+  # Pin a Netlify-supported Node LTS (local builds use 24; 20 is safe for all deps).
+  NODE_VERSION = "20"
+
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 

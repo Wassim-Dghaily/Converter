@@ -248,10 +248,20 @@ Status legend: ☐ not started · ◐ in progress · ☑ done
 - ☐ Remaining (later): OG images, richer per-pair body copy, cookie-consent banner (with ads), a11y audit pass,
   optional self-hosting of OCR/ffmpeg CDN assets, performance audit.
 
-### ☐ Phase 9 — Freemium & monetization scaffolding *(decide details when we reach here)*
-- Even-the-free-tier limits (file size, daily count, batch size, concurrency).
-- Ad slots (e.g. AdSense) for non-subscribers + resolve the **COEP↔ads** conflict (§7).
-- Accounts + Stripe + premium gating; analytics. **Details TBD at this phase.**
+### ◐ Phase 9 — Monetization  *(ads + consent done 2026-06-25; subscriptions deferred)*
+**Decision:** ads + consent only for now — user has no Stripe/business tax ID yet, so accounts &
+subscriptions are **deferred to post-launch**.
+- ☑ **Env-gated, dormant monetization** — ships off by default; lights up when you set env vars
+  (`.env.example`): `NEXT_PUBLIC_ADSENSE_CLIENT`, `NEXT_PUBLIC_PLAUSIBLE_DOMAIN`. No external
+  accounts needed to deploy.
+- ☑ **Consent system** — `ConsentProvider` + `useConsent` (localStorage), `CookieBanner` (animated,
+  Accept/Decline, links to Privacy). Banner only shows when ads/analytics are configured (or in dev).
+- ☑ **`<AdSlot>`** component — renders real AdSense `<ins>` after consent when configured; a labelled
+  dashed placeholder in dev; nothing in production when unconfigured (no empty boxes). Placed below
+  the shell on conversion / category / tool / OCR pages.
+- ☑ **`<SiteScripts>`** — loads AdSense + Plausible via `next/script` only after consent + only when
+  configured. Privacy policy updated for cookies/ads. (No COEP set → AdSense unaffected, §7.)
+- **Deferred to post-launch:** accounts, Stripe subscriptions, Pro gating, server-enforced free-tier limits.
 
 ### ☐ Phase 10 — Launch
 - Domain (GoDaddy/Netlify) + DNS + HTTPS, production env, monitoring + error tracking (Sentry),
@@ -336,6 +346,10 @@ Status legend: ☐ not started · ◐ in progress · ☑ done
   hover, success), reworked homepage (+FAQ, Why, CTA), polished dropzone/converter/tool shells, branded
   404 + favicon, JSON-LD, Privacy/Terms. Verified light+dark headlessly. Build green (139 pages).
   Added deps: framer-motion, next-themes. *(Next: Phase 9 — freemium/monetization, or further polish.)*
+- **2026-06-25** — Light theme set as default; hero "Start converting" now scrolls to the tools grid.
+- **2026-06-25** — **Phase 9 (ads + consent) done.** Env-gated dormant ads/analytics + consent banner +
+  `<AdSlot>` placements; subscriptions deferred post-launch (no Stripe/tax ID yet). Build green.
+  *(Next: Phase 10 — launch prep: domain, deploy to Netlify, QA.)*
 
 ## 9. Bugs Faced
 - **2026-06-25 — Audio conversion fails in the browser (RESOLVED).** mp3 → any format returned

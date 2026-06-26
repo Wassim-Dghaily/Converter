@@ -5,6 +5,7 @@ import { ArrowRight, Wrench } from "lucide-react";
 import { CATEGORIES, CATEGORY_ORDER, registry, type CategoryId } from "@/lib/engine";
 import { toolsForCategory } from "@/lib/tools";
 import { ConverterShell } from "@/components/converter-shell";
+import { AdSlot } from "@/components/ads/ad-slot";
 
 // Pages for categories that have a dedicated route (OCR has its own top-level route).
 const ROUTED: CategoryId[] = CATEGORY_ORDER.filter((c) => c !== "ocr");
@@ -39,6 +40,8 @@ export default function CategoryPage({ params }: { params: { category: string } 
         <p className="mt-2 text-muted-foreground">{category.blurb}</p>
       </header>
       {hasConverters && <ConverterShell categoryId={id} />}
+
+      <AdSlot slot="category-below" className="mt-10" />
 
       {tools.length > 0 && (
         <section className={`mx-auto max-w-2xl ${hasConverters ? "mt-12" : ""}`}>

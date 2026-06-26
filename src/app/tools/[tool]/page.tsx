@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { TOOLS, toolBySlug } from "@/lib/tools";
 import { CATEGORIES } from "@/lib/engine";
 import { ToolShell } from "@/components/tool-shell";
+import { AdSlot } from "@/components/ads/ad-slot";
 
 export const dynamicParams = false;
 
@@ -42,6 +43,8 @@ export default function ToolPage({ params }: { params: { tool: string } }) {
       </header>
 
       <ToolShell slug={tool.slug} />
+
+      <AdSlot slot="tool-below" className="mt-10" />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { CATEGORIES } from "@/lib/engine";
 import { ConverterShell } from "@/components/converter-shell";
+import { AdSlot } from "@/components/ads/ad-slot";
 
 export const metadata: Metadata = {
   title: "OCR — Image to Text",
@@ -16,6 +17,8 @@ export default function OcrPage() {
         <p className="mt-2 text-muted-foreground">{category.blurb}</p>
       </header>
       <ConverterShell categoryId="ocr" />
+
+      <AdSlot slot="ocr-below" className="mt-10" />
     </div>
   );
 }

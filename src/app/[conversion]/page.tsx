@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowRight, ShieldCheck } from "lucide-react";
 import { registry, CATEGORIES } from "@/lib/engine";
 import { ConverterShell } from "@/components/converter-shell";
+import { AdSlot } from "@/components/ads/ad-slot";
 import { siteConfig } from "@/config/site";
 
 // Only real, available conversions get a landing page; everything else 404s.
@@ -57,6 +58,8 @@ export default function ConversionPage({ params }: { params: { conversion: strin
       </header>
 
       <ConverterShell categoryId={pair.category} presetTargetId={pair.to.id} />
+
+      <AdSlot slot="conversion-below" className="mt-10" />
 
       {/* Plain-language SEO content */}
       <section className="prose-sm mx-auto mt-12 max-w-2xl space-y-4 text-sm leading-relaxed text-muted-foreground">
