@@ -263,15 +263,16 @@ subscriptions are **deferred to post-launch**.
   configured. Privacy policy updated for cookies/ads. (No COEP set → AdSense unaffected, §7.)
 - **Deferred to post-launch:** accounts, Stripe subscriptions, Pro gating, server-enforced free-tier limits.
 
-### ◐ Phase 10 — Launch  *(deploying 2026-06-25)*
-- ☑ **Switched to static export** (`output: "export"` → `out/`). The whole app is static + client-side,
-  so no Next server runtime / Netlify Functions / Blobs. `netlify.toml`: publish `out`, dropped the
-  `@netlify/plugin-nextjs` plugin, added static-asset cache headers. Build green; `out/` includes the
-  self-hosted ffmpeg (31 MB) + pdf.js workers, all 139 pages, sitemap, 404, icon.
-- ☑ Deploying via **Netlify CLI** (collaborator, not repo owner → can't git-connect): site `yallaconvert`,
-  `netlify deploy --prod --dir=out`. Free `yallaconvert.netlify.app` subdomain, no custom domain yet.
-- ☐ Remaining: live cross-browser/mobile QA on the deployed URL (esp. ffmpeg/pdf/OCR over HTTPS),
-  custom domain later, error monitoring.
+### ☑ Phase 10 — Launch  *(LIVE 2026-06-27)*
+- ☑ **Static export** (`output: "export"` → `out/`): pure HTML/JS, no Next runtime / Functions / Blobs.
+  `netlify.toml`: publish `out`, dropped `@netlify/plugin-nextjs`, cache headers, `NODE_VERSION=20`.
+- ☑ **Deployed via Netlify CLI** (collaborator, not repo owner → no git-connect): `netlify deploy --prod --dir=out`.
+- ☑ **Custom domain LIVE: https://yallaconvert.com** (bought on Porkbun, + `.net` forwarding) with auto
+  Let's Encrypt HTTPS via Netlify. `siteConfig.url` already pointed there.
+- ☑ **AdSense live & in review** — Auto Ads ON, ads.txt **Authorized**, GDPR CMP (Google 3-choice) enabled.
+  Publisher id `ca-pub-6688641591870090`. Approval status "Getting ready" (Google review pending). See `ADS.md`.
+- ☐ Remaining: wait for AdSense approval; live cross-browser/mobile QA (ffmpeg/audio/video, pdf, OCR over
+  HTTPS); optional error monitoring; future auto-deploys if owner connects the repo.
 
 ### ☐ Phase 11 — Server-side conversion service *(post-launch; details TBD at this phase)*
 - Containerized backend with ffmpeg/LibreOffice/ImageMagick/Ghostscript/Calibre/Tesseract.
@@ -356,6 +357,9 @@ subscriptions are **deferred to post-launch**.
 - **2026-06-25** — **Phase 9 (ads + consent) done.** Env-gated dormant ads/analytics + consent banner +
   `<AdSlot>` placements; subscriptions deferred post-launch (no Stripe/tax ID yet). Build green.
   *(Next: Phase 10 — launch prep: domain, deploy to Netlify, QA.)*
+- **2026-06-27** — **🚀 LAUNCHED.** Static export → Netlify CLI deploy → custom domain
+  **https://yallaconvert.com** (Porkbun, HTTPS). AdSense wired the right way (script + ads.txt
+  Authorized + Auto Ads + Google CMP), now in Google review. Wrote `ADS.md`. YallaConvert is live.
 
 ## 9. Bugs Faced
 - **2026-06-25 — Audio conversion fails in the browser (RESOLVED).** mp3 → any format returned
