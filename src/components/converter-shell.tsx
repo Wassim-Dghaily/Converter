@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { ArrowRight, Download, Loader2, RotateCcw, ShieldCheck } from "lucide-react";
+import { ArrowRight, ChevronDown, Download, Loader2, RotateCcw, ShieldCheck, CheckCircle2 } from "lucide-react";
+import { motion } from "framer-motion";
 import { Dropzone } from "@/components/dropzone";
 import { Button } from "@/components/ui/button";
 import {
@@ -164,24 +165,29 @@ export function ConverterShell({
           {source && (
             <>
               <div className="flex items-center justify-center gap-3 text-sm">
-                <span className="rounded-lg bg-muted px-3 py-1.5 font-medium">{source.label}</span>
+                <span className="rounded-lg bg-gradient-to-br from-primary/15 to-accent/10 px-3.5 py-1.5 font-semibold text-primary">
+                  {source.label}
+                </span>
                 <ArrowRight className="h-4 w-4 text-muted-foreground" />
-                <select
-                  value={targetId}
-                  onChange={(e) => {
-                    // Picking a different target after a conversion refreshes to that conversion.
-                    setTargetId(e.target.value);
-                    setResult(null);
-                    setError(null);
-                  }}
-                  className="rounded-lg border border-input bg-background px-3 py-1.5 font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                >
-                  {targets.map((t) => (
-                    <option key={t.id} value={t.id}>
-                      {t.label}
-                    </option>
-                  ))}
-                </select>
+                <div className="relative">
+                  <select
+                    value={targetId}
+                    onChange={(e) => {
+                      // Picking a different target after a conversion refreshes to that conversion.
+                      setTargetId(e.target.value);
+                      setResult(null);
+                      setError(null);
+                    }}
+                    className="cursor-pointer appearance-none rounded-lg border border-input bg-background px-3.5 py-1.5 pr-9 font-semibold transition-colors hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    {targets.map((t) => (
+                      <option key={t.id} value={t.id}>
+                        {t.label}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                </div>
               </div>
 
               {ready && appliedOptions.length > 0 && !result && (
@@ -265,8 +271,12 @@ export function ConverterShell({
 
               {busy && (
                 <div className="space-y-1.5">
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-                    <div className="h-full bg-primary transition-all" style={{ width: `${Math.round(progress * 100)}%` }} />
+                  <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-muted">
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-primary to-[hsl(286_85%_58%)] transition-all duration-300"
+                      style={{ width: `${Math.max(4, Math.round(progress * 100))}%` }}
+                    />
+                    <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/30 to-transparent" />
                   </div>
                   {stage && (
                     <p className="text-center text-xs text-muted-foreground">
@@ -284,14 +294,29 @@ export function ConverterShell({
               )}
 
               {result ? (
-                <div className="space-y-2">
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                  className="space-y-2"
+                >
+                  <div className="flex items-center justify-center gap-2 py-1 text-sm font-medium text-success">
+                    <motion.span
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 14, delay: 0.05 }}
+                    >
+                      <CheckCircle2 className="h-5 w-5" />
+                    </motion.span>
+                    Done! Your file is ready.
+                  </div>
                   <Button onClick={download} className="w-full" size="lg">
                     <Download className="h-4 w-4" /> Download {result.filename}
                   </Button>
                   <Button onClick={convertAnother} variant="outline" className="w-full">
                     <RotateCcw className="h-4 w-4" /> Convert another file
                   </Button>
-                </div>
+                </motion.div>
               ) : ready ? (
                 <Button onClick={handleConvert} disabled={busy} className="w-full" size="lg">
                   {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : null}

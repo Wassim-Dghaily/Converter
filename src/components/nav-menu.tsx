@@ -6,18 +6,9 @@ import { ChevronDown, Menu, X } from "lucide-react";
 import type { NavMenu } from "@/lib/engine";
 import { cn } from "@/lib/utils";
 
-export function NavMenu({ menus }: { menus: NavMenu[] }) {
-  return (
-    <>
-      <DesktopNav menus={menus} />
-      <MobileNav menus={menus} />
-    </>
-  );
-}
-
 /* ---------------- Desktop: hover / click dropdowns ---------------- */
 
-function DesktopNav({ menus }: { menus: NavMenu[] }) {
+export function DesktopNav({ menus }: { menus: NavMenu[] }) {
   const [open, setOpen] = React.useState<string | null>(null);
   const ref = React.useRef<HTMLDivElement>(null);
 
@@ -90,7 +81,7 @@ function DesktopNav({ menus }: { menus: NavMenu[] }) {
                     <div className="grid max-h-[60vh] grid-cols-2 gap-x-4 gap-y-3 overflow-y-auto sm:grid-cols-3">
                       {menu.groups.map((group) => (
                         <div key={group.title}>
-                          <p className="mb-1 px-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                          <p className="mb-1 px-2 text-[11px] font-bold uppercase tracking-wide text-primary">
                             {group.title}
                           </p>
                           <ul>
@@ -124,7 +115,7 @@ function DesktopNav({ menus }: { menus: NavMenu[] }) {
 
 /* ---------------- Mobile: hamburger + accordion ---------------- */
 
-function MobileNav({ menus }: { menus: NavMenu[] }) {
+export function MobileNav({ menus }: { menus: NavMenu[] }) {
   const [open, setOpen] = React.useState(false);
   const [expanded, setExpanded] = React.useState<string | null>(null);
 
@@ -172,7 +163,7 @@ function MobileNav({ menus }: { menus: NavMenu[] }) {
                     <div className="space-y-3 pb-3 pl-2">
                       {menu.tools.length > 0 && (
                         <div>
-                          <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                          <p className="mb-1 text-[11px] font-bold uppercase tracking-wide text-primary">
                             Tools
                           </p>
                           <ul className="space-y-0.5">
@@ -192,7 +183,7 @@ function MobileNav({ menus }: { menus: NavMenu[] }) {
                       )}
                       {menu.groups.map((group) => (
                         <div key={group.title}>
-                          <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                          <p className="mb-1 text-[11px] font-bold uppercase tracking-wide text-primary">
                             {group.title}
                           </p>
                           <ul className="space-y-0.5">

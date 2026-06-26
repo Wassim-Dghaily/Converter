@@ -7,10 +7,10 @@ import { TOOLS } from "@/lib/tools";
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = siteConfig.url.replace(/\/$/, "");
 
-  const staticRoutes = ["", "/ocr"].map((path) => ({
+  const staticRoutes = ["", "/ocr", "/privacy", "/terms"].map((path) => ({
     url: `${base}${path}`,
     changeFrequency: "weekly" as const,
-    priority: path === "" ? 1 : 0.6,
+    priority: path === "" ? 1 : 0.5,
   }));
 
   const categoryRoutes = categoryList().map((c) => ({

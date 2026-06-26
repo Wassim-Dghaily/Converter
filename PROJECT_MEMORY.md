@@ -230,13 +230,23 @@ Status legend: ☐ not started · ◐ in progress · ☑ done
 - **Stretch (later):** 7z/RAR extract (libarchive.js); data formats (XML/YAML).
 
 ### ◐ Phase 8 — UX polish, SEO, performance, a11y, legal
-- ☑ **Per-conversion SEO landing pages** built early (2026-06-25): registry-driven
-  `/[conversion]` route, per-pair title/meta + canonical, breadcrumb, related links,
-  "popular conversions" on category pages, and `sitemap.ts`. Live for Image (24 pages);
-  future categories generate theirs automatically.
-- ☐ Remaining: structured data (JSON-LD), richer per-pair copy, OG images, meta polish.
-- Lazy WASM loading, bundle splitting, mobile perf, accessibility, error states.
-- Privacy-first messaging; Privacy Policy, Terms, cookie/consent banner.
+- ☑ **Per-conversion SEO landing pages** (registry-driven `/[conversion]`, per-pair meta + canonical,
+  breadcrumb, related links, sitemap). Auto-generated for every category.
+- ☑ **Full design overhaul (2026-06-25)** — "designer workover" per top-converter-site research
+  (Smallpdf/iLovePDF/TinyWow + 2026 trends). Verified light+dark via headless screenshots.
+  - **Foundation:** refined token system (palette, layered shadows, gradients, `bg-mesh`, `glass`),
+    **display font** (Space Grotesk) + Inter body, **dark/light theme toggle** (next-themes),
+    **framer-motion** motion primitives (`Reveal`/`RevealGroup`/`Lift`), `prefers-reduced-motion` honored.
+  - **Header:** scroll-aware frosted header, animated logo, theme toggle, mega-menu dropdowns.
+  - **Homepage:** animated hero (mesh + floating format chips + kinetic headline), richer category
+    cards (gradient icon tiles, hover lift), "How it works", "Why" features, **FAQ accordion**, CTA band.
+  - **Converter/Tool/Dropzone:** polished animated dropzone (drag glow, file card w/ format badge),
+    gradient+shimmer progress, spring **success check**, gradient source pill + styled target select.
+  - **Details:** upgraded `Button` (gradient/variants/active-scale), **branded 404**, **favicon**
+    (`app/icon.svg`), **JSON-LD** (WebSite + SoftwareApplication + FAQPage), display-font page headers,
+    **Privacy + Terms** pages. Build green (139 pages).
+- ☐ Remaining (later): OG images, richer per-pair body copy, cookie-consent banner (with ads), a11y audit pass,
+  optional self-hosting of OCR/ffmpeg CDN assets, performance audit.
 
 ### ☐ Phase 9 — Freemium & monetization scaffolding *(decide details when we reach here)*
 - Even-the-free-tier limits (file size, daily count, batch size, concurrency).
@@ -321,6 +331,11 @@ Status legend: ☐ not started · ◐ in progress · ☑ done
   supports multi-output (file list + download-all). Archives in nav. Build green, 136 pages.
   **All conversion/tool categories are now live.** *(Next: Phase 8 — polish: legal pages, SEO depth,
   perf, a11y, optional self-hosting of OCR/ffmpeg assets.)*
+- **2026-06-25** — **Phase 8 design overhaul done.** Full visual redesign: design tokens, Space Grotesk
+  display font, dark/light theme toggle (next-themes), framer-motion animations (hero, scroll reveals,
+  hover, success), reworked homepage (+FAQ, Why, CTA), polished dropzone/converter/tool shells, branded
+  404 + favicon, JSON-LD, Privacy/Terms. Verified light+dark headlessly. Build green (139 pages).
+  Added deps: framer-motion, next-themes. *(Next: Phase 9 — freemium/monetization, or further polish.)*
 
 ## 9. Bugs Faced
 - **2026-06-25 — Audio conversion fails in the browser (RESOLVED).** mp3 → any format returned

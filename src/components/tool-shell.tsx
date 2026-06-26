@@ -198,10 +198,14 @@ export function ToolShell({ slug }: { slug: string }) {
 
       {busy && (
         <div className="space-y-1.5">
-          <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-            <div className="h-full bg-primary transition-all" style={{ width: `${Math.round(progress * 100)}%` }} />
+          <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-muted">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-primary to-[hsl(286_85%_58%)] transition-all duration-300"
+              style={{ width: `${Math.max(4, Math.round(progress * 100))}%` }}
+            />
+            <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/30 to-transparent" />
           </div>
-          {stage && <p className="text-center text-xs text-muted-foreground">{stage}</p>}
+          {stage && <p className="truncate text-center text-xs text-muted-foreground">{stage}</p>}
         </div>
       )}
 

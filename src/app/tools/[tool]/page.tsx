@@ -37,7 +37,7 @@ export default function ToolPage({ params }: { params: { tool: string } }) {
       </nav>
 
       <header className="mx-auto mb-10 max-w-2xl text-center">
-        <h1 className="text-3xl font-bold tracking-tight md:text-4xl">{tool.title}</h1>
+        <h1 className="font-display text-3xl font-bold tracking-tight md:text-4xl">{tool.title}</h1>
         <p className="mt-2 text-muted-foreground">{tool.description}</p>
       </header>
 

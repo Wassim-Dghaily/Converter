@@ -35,7 +35,7 @@ export default function CategoryPage({ params }: { params: { category: string } 
   return (
     <div className="container py-12 md:py-16">
       <header className="mx-auto mb-10 max-w-2xl text-center">
-        <h1 className="text-3xl font-bold tracking-tight md:text-4xl">{category.label} Converter</h1>
+        <h1 className="font-display text-3xl font-bold tracking-tight md:text-4xl">{category.label} Converter</h1>
         <p className="mt-2 text-muted-foreground">{category.blurb}</p>
       </header>
       {hasConverters && <ConverterShell categoryId={id} />}
