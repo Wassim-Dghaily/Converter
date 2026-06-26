@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { useConsent } from "@/components/consent/consent-context";
 import { ADSENSE_CLIENT, isDev } from "@/config/monetization";
 import { cn } from "@/lib/utils";
 
@@ -12,24 +11,28 @@ declare global {
 }
 
 /**
- * A single ad placement. Dormant until NEXT_PUBLIC_ADSENSE_CLIENT is set and the visitor has
- * accepted cookies. With nothing configured it renders a labelled placeholder in development
- * (so placements are visible) and nothing in production.
+ * A manual ad placement. Renders a real AdSense `<ins>` unit in production when:
+ *   - NEXT_PUBLIC_ADSENSE_CLIENT is set, AND
+ *   - `slot` is a real numeric AdSense ad-unit id.
+ * Until you create ad units (so `slot` is still a label like "tool-below"), it renders a
+ * labelled placeholder in dev and nothing in production — meanwhile AdSense Auto Ads handles
+ * placement automatically from the head script. EU consent is handled by Google's CMP.
  */
 export function AdSlot({ slot, className, format = "auto" }: { slot: string; className?: string; format?: string }) {
-  const { consent } = useConsent();
+  const isRealSlot = /^\d+$/.test(slot);
+  const active = Boolean(ADSENSE_CLIENT) && isRealSlot && !isDev;
 
   React.useEffect(() => {
-    if (ADSENSE_CLIENT && consent === "accepted") {
+    if (active) {
       try {
         (window.adsbygoogle = window.adsbygoogle || []).push({});
       } catch {
         /* adsbygoogle not ready yet */
       }
     }
-  }, [consent]);
+  }, [active]);
 
-  if (!ADSENSE_CLIENT) {
+  if (!active) {
     if (!isDev) return null;
     return (
       <div
@@ -42,8 +45,6 @@ export function AdSlot({ slot, className, format = "auto" }: { slot: string; cla
       </div>
     );
   }
-
-  if (consent !== "accepted") return null;
 
   return (
     <div className={cn("mx-auto w-full max-w-3xl text-center", className)}>

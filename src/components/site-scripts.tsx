@@ -2,16 +2,21 @@
 
 import Script from "next/script";
 import { useConsent } from "@/components/consent/consent-context";
-import { ADSENSE_CLIENT, PLAUSIBLE_DOMAIN } from "@/config/monetization";
+import { ADSENSE_CLIENT, PLAUSIBLE_DOMAIN, isDev } from "@/config/monetization";
 
-/** Loads third-party scripts (AdSense, analytics) only after consent and only when configured. */
+/**
+ * Third-party scripts.
+ * - AdSense: loaded in production when configured (the documented "right way" — next/script,
+ *   afterInteractive). Not gated by our banner; EU consent is handled by Google's own
+ *   "Privacy & messaging" CMP (enable it in the AdSense dashboard).
+ * - Analytics (Plausible, cookieless): only after explicit consent.
+ */
 export function SiteScripts() {
   const { consent } = useConsent();
-  if (consent !== "accepted") return null;
 
   return (
     <>
-      {ADSENSE_CLIENT && (
+      {ADSENSE_CLIENT && !isDev && (
         <Script
           id="adsbygoogle-init"
           async
@@ -20,7 +25,7 @@ export function SiteScripts() {
           crossOrigin="anonymous"
         />
       )}
-      {PLAUSIBLE_DOMAIN && (
+      {PLAUSIBLE_DOMAIN && consent === "accepted" && (
         <Script
           id="plausible-analytics"
           defer

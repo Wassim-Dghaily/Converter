@@ -8,7 +8,10 @@
 export const ADSENSE_CLIENT = process.env.NEXT_PUBLIC_ADSENSE_CLIENT ?? "";
 export const PLAUSIBLE_DOMAIN = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN ?? "";
 
-/** Anything that drops cookies / loads third-party scripts → we need consent + a banner. */
-export const NEEDS_CONSENT = Boolean(ADSENSE_CLIENT || PLAUSIBLE_DOMAIN);
+/**
+ * Our consent banner is for analytics only. AdSense's own "Privacy & messaging" CMP (enabled in
+ * the AdSense dashboard) handles EU ad consent, which is the supported way to gate ads.
+ */
+export const NEEDS_CONSENT = Boolean(PLAUSIBLE_DOMAIN);
 
 export const isDev = process.env.NODE_ENV !== "production";
