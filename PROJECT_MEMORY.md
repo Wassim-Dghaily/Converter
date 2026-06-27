@@ -280,6 +280,19 @@ subscriptions are **deferred to post-launch**.
 - Job queue, temp storage + auto-delete, autoscaling, cost controls. Plugs into the
   Engine Registry (§4) with no front-end rewrite.
 
+### ☐ Phase 12 — Mobile & responsive full pass *(future; keep the existing visual style)*
+A dedicated mobile QA + polish pass — **no redesign**, just make everything sit right on small screens
+and stop the homepage feeling like an "endless scroll of info."
+- **Audit at 360–414px** (light + dark) every surface: homepage (hero, category grid, how-it-works,
+  the 6 "Why" cards, FAQ, CTA), converter/tool/conversion pages, the nav dropdown + mobile menu,
+  the dropzone, and the footer. Catch any grid/cards that misalign, overflow, or shrink to loose boxes.
+- **Apply 2026 mobile best practices** (researched): mobile-first / single-column base (≥360px);
+  **≥44×44px tap targets**; fluid type via `clamp()`/`rem`; cut above-the-fold clutter; keep primary
+  actions reachable in the **bottom-third thumb zone**; tighten section vertical padding on mobile; and
+  consider **2-column grids on mobile** (category cards, "Why" cards) to shorten the scroll.
+- **Verify** with headless screenshots at phone widths before/after.
+- Sources: web.dev / 2026 responsive-design guides (alfdesigngroup, we-interactive, americaneagle).
+
 ---
 
 ## 7. Key Technical Risks & Notes
