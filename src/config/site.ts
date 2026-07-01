@@ -1,7 +1,10 @@
 /** Central brand + site configuration for YallaConvert. */
 export const siteConfig = {
   name: "YallaConvert",
+  /** On-site motto (hero, etc.) — stays as the brand voice. */
   tagline: "Convert anything. Yalla.",
+  /** Descriptive, keyword-rich title used for the homepage <title> + OG (search results). */
+  seoTitle: "YallaConvert – Free Online File Converter (PDF, JPG, PNG, MP4, MP3 & More)",
   description:
     "Fast, free, and private file conversion that runs right in your browser. " +
     "Convert images, audio, video, PDFs and documents — your files never leave your device.",
